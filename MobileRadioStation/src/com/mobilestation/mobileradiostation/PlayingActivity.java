@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class PlayingActivity extends Activity {
+	
 	private String mFilePath;
 	private String mTitle;
 	private long mDuration;

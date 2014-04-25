@@ -1,0 +1,79 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/live_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id ="@+id/mic_track"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+      >
+
+        <TextView
+            android:id="@+id/mic_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <SeekBar
+            android:id="@+id/mic_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4" />    
+		
+        <!-- MIC Buttion -->
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sound_track"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+
+         <TextView
+            android:id="@+id/sound_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        
+        <SeekBar
+            android:id="@+id/sound_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4" />
+         
+		<!-- Sound Button -->
+        </LinearLayout>
+    
+    <LinearLayout     
+        android:id="@+id/sound_selector"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button 
+        android:id="@+id/sound_select"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Select Wave Format File"/>
+    	<TextView 
+        android:id="@+id/sound_selected"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    	</LinearLayout>
+    	
+    
+	<ListView 
+		    android:id="@+id/sound_list"
+		    android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        
+</LinearLayout>

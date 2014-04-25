@@ -27,6 +27,7 @@
         </activity>
         <activity
 	         android:name="com.mobilestation.mobileradiostation.RecordActivity"/>
+        
         <activity
     	     android:name="com.mobilestation.mobileradiostation.PlayingActivity"/>
         <activity

@@ -19,6 +19,7 @@ public class BroadcastActivity extends Activity{
 		
 		Button imgLive = (Button)findViewById(R.id.btn_start_live);
 		Button imgRecorded = (Button)findViewById(R.id.btn_start_recorded_audio);
+		
 		//imgLive.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
 		imgLive.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
 		imgRecorded.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
@@ -26,7 +27,7 @@ public class BroadcastActivity extends Activity{
 		imgLive.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(getApplicationContext(), RecordActivity.class);
+				Intent intent = new Intent(getApplicationContext(), LiveActivity.class);
 				intent.putExtra(Utils.RECORD_MODE, Utils.MODE_LIVE);
 				startActivity(intent);
 			}

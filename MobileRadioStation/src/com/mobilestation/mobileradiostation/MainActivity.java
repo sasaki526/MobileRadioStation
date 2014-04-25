@@ -10,7 +10,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 public class MainActivity extends Activity {
+	
 	private GridView mGridMainItem;
+	
 	private MainItem[] MAIN_ITEMS = {
 			new MainItem("Broadcast", R.drawable.broadcast, BroadcastActivity.class),
 			new MainItem("Record", R.drawable.top_record, RecordActivity.class),
@@ -22,19 +24,26 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_main);
 		mGridMainItem = (GridView)findViewById(R.id.grid_main);
 		
 		mGridMainItem.setOnItemClickListener(new OnItemClickListener(){
+			
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				GridView gridView = (GridView)parent;
 				MainItem item = (MainItem)gridView.getItemAtPosition(position);
-				Intent intent = new Intent(getApplicationContext(), (Class<?>)item.getClassName());
+				
+				Intent intent = new Intent(getApplicationContext(), 
+						(Class<?>)item.getClassName());
+				
 				if(item.getClassName().equals(PlayListActivity.class)){
 					intent.putExtra(Utils.LIST_MODE, Utils.MODE_EDIT);
+					
 				} else if (item.getClassName().equals(RecordActivity.class)){
 					intent.putExtra(Utils.RECORD_MODE, Utils.MODE_RECORD);
+					
 				}
 				startActivity(intent);
 			}
