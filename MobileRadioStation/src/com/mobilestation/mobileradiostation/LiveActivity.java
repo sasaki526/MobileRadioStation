@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -173,6 +175,24 @@ public class LiveActivity extends Activity{
 				mSelectedTitle.setText(Utils.uriToDisplayName(LiveActivity.this, uri));
 				
 			}
+		});
+		
+		mSoundList.setOnItemLongClickListener(new OnItemLongClickListener(){
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				Uri uri = (Uri) arg0.getItemAtPosition(arg2);
+					mNextSongs.remove(uri);
+					mNextSongs.notifyDataSetChanged();
+					
+					Toast.makeText(LiveActivity.this, 
+							Utils.uriToDisplayName(LiveActivity.this, uri) + " deleted.", 
+							Toast.LENGTH_SHORT).show();
+					
+				return false;
+			}
+			
 		});
 	}
 	

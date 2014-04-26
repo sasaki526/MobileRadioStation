@@ -1,14 +1,22 @@
 package com.mobilestation.bobileradiostation.views;
 
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.mobilestation.mobileradiostation.Utils;
+
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioTimestamp;
 import android.media.AudioTrack;
+import android.media.AudioTrack.OnPlaybackPositionUpdateListener;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,6 +41,9 @@ public class SoundButtonHelper implements Runnable {
 	float mLeftVolume;
 	float mRightVolume;
 	
+	int mDuration;
+	int mElapsedTime;
+	
 	/**
 	 * Contor
 	 * @param context
@@ -43,7 +54,8 @@ public class SoundButtonHelper implements Runnable {
 		mRunning = false;
 		mLeftVolume = 0;
 		mRightVolume = 0;
-		
+		mDuration = 0;
+		mElapsedTime = 0;
 	}
 	
 	/**
@@ -62,6 +74,7 @@ public class SoundButtonHelper implements Runnable {
 		return mRunning;
 	}
 	
+	
 	/**
 	 * Force to stop playing.
 	 */
@@ -69,7 +82,16 @@ public class SoundButtonHelper implements Runnable {
 		mRunning = false;
 	}
 	
-
+	public int getDuration(){
+		return mDuration;
+	}
+	
+	public void setDuration(){
+		mDuration = Utils.uriToDuration(mContext, mUri);
+	}
+	public int getCurrentDuration(){
+		return mElapsedTime;
+	}
 	/**
 	 * Sets the volume index for left and right
 	 * @param l left volume index
@@ -91,6 +113,15 @@ public class SoundButtonHelper implements Runnable {
 			Toast.makeText(mContext, "Please Select Sound file you want to play.", Toast.LENGTH_SHORT).show();
 			return false;
 		}
+		
+		
+		if ( !Utils.isPCM(mContext,mUri) || !Utils.is44100Hz(mContext,	mUri)){
+			Toast.makeText(mContext, "Sorry. 44100Hz and 16bps required for now.", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		
+        
+		
 		mRunning = true;
 		return true;
 	}
@@ -111,13 +142,30 @@ public class SoundButtonHelper implements Runnable {
 	    								bufSize, 
 	    								AudioTrack.MODE_STREAM);
 	    
+	    
+		anTrack.setPlaybackPositionUpdateListener(new OnPlaybackPositionUpdateListener(){
+
+			@Override
+			public void onMarkerReached(AudioTrack arg0) {
+				
+			}
+
+			@Override
+			public void onPeriodicNotification(AudioTrack arg0) {
+				
+			}
+	    	
+	    });
+	    
 	    int i = 0;
 		int workbuffer = 512;
 	    byte[] pieceOfMusic = new byte[workbuffer];
 	    try {
 	    	
 	    	
-	        InputStream in = mContext.getContentResolver().openInputStream(mUri);
+	    	InputStream in = mContext.getContentResolver().openInputStream(mUri);
+	        
+	        
 	        DataInputStream soundStream = new DataInputStream(in);
 
 	        anTrack.play();
@@ -125,6 +173,7 @@ public class SoundButtonHelper implements Runnable {
 	        	
 	            anTrack.write(pieceOfMusic, 0, i);
 	            anTrack.setStereoVolume(mLeftVolume, mRightVolume);
+	            
 	        }
 	        anTrack.stop();
 	        anTrack.release();
