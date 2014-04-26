@@ -68,7 +68,7 @@ public class MicButtonHelper implements Runnable {
 	public void run() {
 		Log.i(TAG, "MIC:TRUE");
 		/* MIC ON */
-		int freq = 44100;
+		int freq = 8000;
 		int bufferSize = AudioRecord.getMinBufferSize(freq,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
