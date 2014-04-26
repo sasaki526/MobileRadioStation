@@ -172,7 +172,12 @@ public class LiveActivity extends Activity{
 				Uri uri = (Uri) arg0.getItemAtPosition(arg2);
 				
 				mSoundButton.setSoundUri(uri);
-				mSelectedTitle.setText(Utils.uriToDisplayName(LiveActivity.this, uri));
+				String duration = mSoundButton.getDurationString();
+				mSelectedTitle.setText("Name: " + 
+						Utils.uriToDisplayName(LiveActivity.this, uri)
+						+ " [ "
+						+ duration 
+						+ " ]");
 				
 			}
 		});

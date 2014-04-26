@@ -1,12 +1,19 @@
 package com.mobilestation.bobileradiostation.views;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.mobilestation.mobileradiostation.Utils;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 /**
  * Button for playing music.
@@ -23,7 +30,23 @@ public class SoundButton extends Button {
 	private Thread mRT = null;
 	private AudioManager mAudioManager = null;
 	
+	private Timer mTimer = null;
+	class UpdateTime extends TimerTask {
+
+		private Handler handle = new Handler();
+		@Override
+		public void run() {
+			
+			handle.post(new Runnable (){		
+				@Override
+				public void run() {
+					setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
+							
+				}
+			});
+		}
 	
+	}
 	/**
 	 * Contor
 	 * @param context
@@ -32,6 +55,7 @@ public class SoundButton extends Button {
 		super(context);
 		mSoundProvider = new SoundButtonHelper(context);
 		mAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+		
 		setText("Sound");
 		
 	}
@@ -58,6 +82,7 @@ public class SoundButton extends Button {
 		}else {
 			Log.i("test","FALSE");
 			startSound();
+			
 		}
 		
 	}
@@ -78,7 +103,9 @@ public class SoundButton extends Button {
 			mRT.join();
 			mRT = null;
 			setText("Play");
-			setTextColor(Color.rgb(0, 100, 0));			
+			setTextColor(Color.rgb(0, 100, 0));	
+			
+			mTimer.cancel();
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -93,9 +120,12 @@ public class SoundButton extends Button {
 		mRT = new Thread(mSoundProvider);
 		if ( mSoundProvider.getSet() ){
 			mRT.start();
-
 			setText("Stop");
 			setTextColor(Color.RED);
+			
+			mTimer = new Timer();
+			UpdateTime tt = new UpdateTime();
+			mTimer.scheduleAtFixedRate(tt, 1000, 1000);
 			
 		}
 
@@ -126,6 +156,11 @@ public class SoundButton extends Button {
 	 */
 	public boolean isRunning() {
 		return mSoundProvider.isRunning();
+	}
+
+	public String getDurationString() {
+		mSoundProvider.setDuration();
+		return Utils.foramtTime(mSoundProvider.getDuration());
 	}
 	
 

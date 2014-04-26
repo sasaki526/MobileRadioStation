@@ -87,7 +87,7 @@ public class SoundButtonHelper implements Runnable {
 	}
 	
 	public void setDuration(){
-		mDuration = Utils.uriToDuration(mContext, mUri);
+		mDuration = Utils.uriToDurationInmsec(mContext, mUri);
 	}
 	public int getCurrentDuration(){
 		return mElapsedTime;
@@ -120,7 +120,7 @@ public class SoundButtonHelper implements Runnable {
 			return false;
 		}
 		
-        
+		setDuration();
 		
 		mRunning = true;
 		return true;
@@ -130,6 +130,7 @@ public class SoundButtonHelper implements Runnable {
 	 */
 	@Override
 	public void run() {
+		
 		
 		int bufSize = AudioTrack.getMinBufferSize(44100, 
 					AudioFormat.CHANNEL_IN_STEREO, 
@@ -157,10 +158,11 @@ public class SoundButtonHelper implements Runnable {
 	    	
 	    });
 	    
-	    int i = 0;
+		int i = 0;
 		int workbuffer = 512;
 	    byte[] pieceOfMusic = new byte[workbuffer];
-	    try {
+	    long dataWritten = 0;
+		try {
 	    	
 	    	
 	    	InputStream in = mContext.getContentResolver().openInputStream(mUri);
@@ -171,9 +173,9 @@ public class SoundButtonHelper implements Runnable {
 	        anTrack.play();
 	        while(mRunning && (i = soundStream.read(pieceOfMusic, 0, workbuffer)) > -1){
 	        	
-	            anTrack.write(pieceOfMusic, 0, i);
+	            dataWritten += anTrack.write(pieceOfMusic, 0, i);
 	            anTrack.setStereoVolume(mLeftVolume, mRightVolume);
-	            
+	            mElapsedTime = (int) (mDuration - (dataWritten * 1000 / (44100.0 * 2 * 2)));
 	        }
 	        anTrack.stop();
 	        anTrack.release();

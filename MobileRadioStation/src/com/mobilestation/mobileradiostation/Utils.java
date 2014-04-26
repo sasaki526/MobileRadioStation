@@ -1,14 +1,18 @@
 package com.mobilestation.mobileradiostation;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.concurrent.TimeUnit;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,6 +31,9 @@ public class Utils {
 	public static final String MODE_RECORD="com.mobilestation.mobileradiostation.MODE_RECORD";
 	public static final String MODE_LIVE="com.mobilestation.mobileradiostation.MODE_LIVE";
 	
+	/* to make sure what kind of WAV file.*/
+	private static final int HEADER_SIZE = 44;
+	 
 	public static String uriToDisplayName(Context context, Uri uri){
 	
 		String[] column = { MediaStore.Audio.Media.DISPLAY_NAME };
@@ -49,33 +56,38 @@ public class Utils {
 
 	}
 	
-	public static int uriToDuration(Context context, Uri uri){
+	public static String foramtTime(int milisec){
+	
+		int s = (milisec / 1000) % 60;
+		int m = (milisec / (1000 * 60)) % 60;
+		int h = (milisec / (1000 * 60 * 60)) % 24;	
+		return String.format("%02d:%02d:%02d", h,m,s);
+		}
+	
+	public static int uriToDurationInmsec(Context context, Uri uri){
+		int duration = 0;
+		MediaPlayer temp = new MediaPlayer();
+		try {
+			temp.setDataSource(context, uri);
+			temp.prepare();
+			duration = temp.getDuration();
+			temp.release();
+			
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		String[] column = { MediaStore.Audio.Media.DURATION };
-		ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(
-                        uri, 
-                        column, 
-                        null,
-                        null,
-                        null);
-       
-        cursor.moveToFirst();
-	    return  cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media.DISPLAY_NAME)); 
-	    
+		return duration;
 
 	}
 	
-	private static final String RIFF_HEADER = "RIFF";
-	  private static final String WAVE_HEADER = "WAVE";
-	  private static final String FMT_HEADER = "fmt ";
-	  private static final String DATA_HEADER = "data";
-	   
-	  private static final int HEADER_SIZE = 44;
-	   
-	  private static final String CHARSET = "ASCII";
-	 
-	 
+	 	 
 	  public static boolean isPCM(Context context, Uri uri)  {
 
 		  InputStream wav = null;
