@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Button for Line out from MIC in.
@@ -16,9 +18,11 @@ import android.widget.Button;
  * By clicking this button, real time play starts by getting voice through MIC.
  * and then, you could stop it by clicking again.
  */
-public class MicButton extends Button {
+public class MicButton extends ImageView {
 	
 	//private static final String TAG = "MicButton";
+	
+	private TextView text = null;
 	
 	MicButtonHelper mMic = null;
 	Thread mRT  = null;
@@ -38,13 +42,17 @@ public class MicButton extends Button {
 	 * Contor
 	 * @param context
 	 */
-	public MicButton(Context context) {
+
+	public MicButton(Context context, TextView mMicStatusLabel) {
 		super(context);
 		mMic = new MicButtonHelper();
 		setOnClickListener(clicker);
-		setText("MIC");
 		
 		mAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+	
+		text = mMicStatusLabel;
+		text.setText("MIC");
+		
 	}
 
 	/**
@@ -92,8 +100,8 @@ public class MicButton extends Button {
 		mMic.terminate();
 		try {
 			mRT.join();
-			setText("MIC OFF");
-			setTextColor(Color.rgb(0, 100, 0));			
+			text.setText("MIC OFF");
+			text.setTextColor(Color.rgb(0, 100, 0));			
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -109,8 +117,8 @@ public class MicButton extends Button {
 		mMic.getSet();
 		mRT.start();
 		
-		setText("ON AIR");
-		setTextColor(Color.RED);
+		text.setText("ON AIR");
+		text.setTextColor(Color.RED);
 
 	}
 	

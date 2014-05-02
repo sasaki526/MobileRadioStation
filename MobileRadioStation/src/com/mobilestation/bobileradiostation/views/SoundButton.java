@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -24,8 +26,9 @@ import android.widget.Toast;
  * @author masa
  *
  */
-public class SoundButton extends Button {
+public class SoundButton extends ImageView {
 
+	private TextView text = null;
 	private SoundButtonHelper mSoundProvider = null;
 	private Thread mRT = null;
 	private AudioManager mAudioManager = null;
@@ -40,7 +43,7 @@ public class SoundButton extends Button {
 			handle.post(new Runnable (){		
 				@Override
 				public void run() {
-					setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
+					//setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
 							
 				}
 			});
@@ -51,13 +54,15 @@ public class SoundButton extends Button {
 	 * Contor
 	 * @param context
 	 */
-	public SoundButton(Context context) {
+	public SoundButton(Context context, TextView mSoundStatusLabel) {
 		super(context);
 		mSoundProvider = new SoundButtonHelper(context);
 		mAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		
-		setText("Sound");
-		
+	
+		text = mSoundStatusLabel;
+		text.setText("Sound");
+			
 	}
 
 	/**
@@ -102,8 +107,8 @@ public class SoundButton extends Button {
 		try {
 			mRT.join();
 			mRT = null;
-			setText("Play");
-			setTextColor(Color.rgb(0, 100, 0));	
+			text.setText("Play");
+			text.setTextColor(Color.rgb(0, 100, 0));	
 			
 			mTimer.cancel();
 
@@ -120,8 +125,8 @@ public class SoundButton extends Button {
 		mRT = new Thread(mSoundProvider);
 		if ( mSoundProvider.getSet() ){
 			mRT.start();
-			setText("Stop");
-			setTextColor(Color.RED);
+			text.setText("Stop");
+			text.setTextColor(Color.RED);
 			
 			mTimer = new Timer();
 			UpdateTime tt = new UpdateTime();

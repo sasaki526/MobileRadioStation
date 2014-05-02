@@ -3,9 +3,13 @@ package com.mobilestation.mobileradiostation;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,13 +43,14 @@ public class LiveActivity extends Activity{
 	private static final int CODE_SOUND_URI = 0;
 	
 	/* Widgets */
-	SeekBar mMicBar = null;
 	TextView mMicLabel = null;
-	//ListView mMicList = null;
+	SeekBar mMicBar = null;
+	TextView mMicStatusLabel = null;
 	MicButton mMicButton = null;
 	
-	SeekBar mSoundBar = null;
 	TextView mSoundLabel = null;
+	SeekBar mSoundBar = null;
+	TextView mSoundStatusLabel = null;
 	SoundButton mSoundButton = null;
 
 	Button mSelecter = null;
@@ -66,15 +71,6 @@ public class LiveActivity extends Activity{
 		LinearLayout micLayout = (LinearLayout)findViewById(R.id.mic_track);
 		mMicLabel = (TextView)findViewById(R.id.mic_label);
 		mMicBar = (SeekBar)findViewById(R.id.mic_bar);
-		
-		//mMicBar = new MixingBar(LiveActivity.this);
-		//LinearLayout.LayoutParams paramsMic = new LinearLayout.LayoutParams(
-		//	LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,1 );
-		//paramsMic.setMargins(0, 16, 0, 0);
-		
-		//mMicBar.setLayoutParams(paramsMic);
-		//micLayout.addView(mMicBar);
-		
 		mMicBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 
 			@Override
@@ -95,7 +91,9 @@ public class LiveActivity extends Activity{
 			
 		});
 
-		mMicButton = new MicButton(LiveActivity.this);
+		mMicStatusLabel = (TextView) findViewById(R.id.mic_status_label);
+		mMicButton = new MicButton(LiveActivity.this,mMicStatusLabel);
+		mMicButton.setImageResource(R.drawable.mic);
 		LinearLayout.LayoutParams paramsMicButton = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,1.0f);
 		mMicButton.setLayoutParams(paramsMicButton);
 		mMicBar.setMax(mMicButton.getMaxVolume() * 10 ); //Improve Resolution x10
@@ -108,13 +106,6 @@ public class LiveActivity extends Activity{
 
 		mSoundLabel = (TextView)findViewById(R.id.sound_label);
 		mSoundBar = (SeekBar)findViewById(R.id.sound_bar);
-		
-		//mSoundBar = new MixingBar(LiveActivity.this);
-		//LinearLayout.LayoutParams paramsSound = new LinearLayout.LayoutParams(
-		//	LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,1);
-		//paramsSound.setMargins(0, 16, 0, 0);
-		//mSoundBar.setLayoutParams(paramsSound);
-		//soundLayout.addView(mSoundBar);
 		
 		mSoundBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			
@@ -131,7 +122,11 @@ public class LiveActivity extends Activity{
 			}
 		});
 		
-		mSoundButton = new SoundButton(LiveActivity.this);
+		mSoundStatusLabel = (TextView)findViewById(R.id.sound_status_label);
+		
+		mSoundButton = new SoundButton(LiveActivity.this,mSoundStatusLabel);
+		mSoundButton.setImageResource(R.drawable.sound);
+		
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
 				0, LayoutParams.WRAP_CONTENT,1.0f);
 		mSoundButton.setLayoutParams(paramsSoundButton);
@@ -150,21 +145,22 @@ public class LiveActivity extends Activity{
 		soundLayout.addView(mSoundButton);
 		
 		
-		/* Selecter Section */
+		/* Selector Section 
 		mSelecter = (Button)findViewById(R.id.sound_select);
 		mSelecter.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View arg0) {
-				showFileChooser();
+				//showFileChooser();
 			}
 			
-		});
+		});*/
 		mSelectedTitle = (TextView)findViewById(R.id.sound_selected);
 		
 		mSoundList = (ListView)findViewById(R.id.sound_list);
-		mNextSongs = new SoundFileAdapter(LiveActivity.this, R.layout.songs, new ArrayList<Uri>());
+		mNextSongs = new SoundFileAdapter(LiveActivity.this, R.layout.songs, getAudioResources());
 		mSoundList.setAdapter(mNextSongs);
+	
 		mSoundList.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -173,7 +169,7 @@ public class LiveActivity extends Activity{
 				
 				mSoundButton.setSoundUri(uri);
 				String duration = mSoundButton.getDurationString();
-				mSelectedTitle.setText("Name: " + 
+				mSelectedTitle.setText("SOUND LIST: " + 
 						Utils.uriToDisplayName(LiveActivity.this, uri)
 						+ " [ "
 						+ duration 
@@ -201,18 +197,34 @@ public class LiveActivity extends Activity{
 		});
 	}
 	
-	
-	private void showFileChooser(){
-		
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType("*/*");
-		intent.addCategory(Intent.CATEGORY_OPENABLE);	
-		startActivityForResult(Intent.createChooser(intent	, "Select a sound file to play"),
-				CODE_SOUND_URI);
-		
-		
+	private ArrayList<Uri> getAudioResources(){
+        ArrayList<Uri> tracks = new ArrayList<Uri>();
+        ContentResolver resolver = this.getContentResolver();
+        Cursor cursor = resolver.query(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+                        Track.COLUMNS, 
+                        null,
+                        null,
+                        null);
+        while( cursor.moveToNext() ){
+                tracks.add( ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                		cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media._ID )) ));
+        }
+        cursor.close();
+        return tracks;		
 	}
+	
+	
+//	private void showFileChooser(){
+//		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//		intent.setType("*/*");
+	//		intent.addCategory(Intent.CATEGORY_OPENABLE);	
+	//startActivityForResult(Intent.createChooser(intent	, "Select a sound file to play"),
+	//		CODE_SOUND_URI);
+	//
+	//}
 
+	/*
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode){
@@ -232,7 +244,7 @@ public class LiveActivity extends Activity{
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-
+*/
 
 	@Override
 	protected void onPause() {

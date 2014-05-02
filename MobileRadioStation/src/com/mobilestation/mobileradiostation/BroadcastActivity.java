@@ -17,12 +17,10 @@ public class BroadcastActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.broadcast_main);
 		
-		Button imgLive = (Button)findViewById(R.id.btn_start_live);
-		Button imgRecorded = (Button)findViewById(R.id.btn_start_recorded_audio);
-		
-		//imgLive.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
-		imgLive.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
-		imgRecorded.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+		ImageView imgLive = (ImageView)findViewById(R.id.btn_start_live);
+		imgLive.setImageResource(R.drawable.live);
+		ImageView imgRecorded = (ImageView)findViewById(R.id.btn_start_recorded_audio);
+		imgRecorded.setImageResource(R.drawable.archive);
 		
 		imgLive.setOnClickListener(new OnClickListener(){
 			@Override

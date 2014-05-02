@@ -25,7 +25,6 @@ public class MainGridAdapter extends ArrayAdapter<MainItem>{
         for(int i=0; i<items.length; i++){
         	mMainItemList.add(items[i]);
         }
-//        	mMainItemList = (ArrayList<MainItem>) Arrays.asList(items);
         	mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
  
@@ -40,17 +39,14 @@ public class MainGridAdapter extends ArrayAdapter<MainItem>{
             convertView = mInflater.inflate(mResourceId, null);
             holder = new ViewHolder();
             holder.ivIcon = (ImageView)convertView.findViewById(R.id.img_main_icon);
-            holder.tvName = (TextView)convertView.findViewById(R.id.txt_item_name);
             convertView.setTag(holder);
         }
         holder.ivIcon.setBackgroundResource(item.getResourceId());
-        holder.tvName.setText(item.getName());
- 
+  
         return convertView;
     }
     
     private static class ViewHolder{
     	ImageView ivIcon;
-    	TextView tvName;
     }
 }
