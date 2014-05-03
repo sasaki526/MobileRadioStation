@@ -1,4 +1,4 @@
-package com.mobilestation.bobileradiostation.views;
+package com.mobilestation.mobileradiostation.views;
 
 
 import java.util.Timer;
