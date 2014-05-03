@@ -1,4 +1,4 @@
-package com.mobilestation.mobileradiostation.controller;
+package com.mobilestation.mobileradiostation.controllers;
 
 import java.util.ArrayList;
 

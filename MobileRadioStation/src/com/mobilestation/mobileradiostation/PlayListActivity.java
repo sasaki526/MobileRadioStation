@@ -3,7 +3,7 @@ package com.mobilestation.mobileradiostation;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.mobilestation.mobileradiostation.controller.TrackListAdapter;
+import com.mobilestation.mobileradiostation.controllers.TrackListAdapter;
 import com.mobilestation.mobileradiostation.models.Track;
 
 import android.app.Activity;

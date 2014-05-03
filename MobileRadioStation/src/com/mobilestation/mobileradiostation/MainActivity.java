@@ -1,6 +1,6 @@
 package com.mobilestation.mobileradiostation;
 
-import com.mobilestation.mobileradiostation.controller.MainGridAdapter;
+import com.mobilestation.mobileradiostation.controllers.MainGridAdapter;
 
 import android.os.Bundle;
 import android.app.ActionBar;

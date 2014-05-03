@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.mobilestation.mobileradiostation.RecordActivity.MyTimerTask;
-import com.mobilestation.mobileradiostation.controller.TrackListAdapter;
+import com.mobilestation.mobileradiostation.controllers.TrackListAdapter;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
