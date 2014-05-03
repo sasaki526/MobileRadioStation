@@ -4,10 +4,15 @@ package com.mobilestation.bobileradiostation.views;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.mobilestation.mobileradiostation.R;
 import com.mobilestation.mobileradiostation.Utils;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -118,6 +123,9 @@ public class SoundButton extends ImageView {
 
 	}
 	
+
+
+
 	/**
 	 * Starts your sound.
 	 */

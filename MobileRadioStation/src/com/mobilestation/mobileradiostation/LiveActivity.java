@@ -6,7 +6,12 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -71,6 +76,8 @@ public class LiveActivity extends Activity{
 		LinearLayout micLayout = (LinearLayout)findViewById(R.id.mic_track);
 		mMicLabel = (TextView)findViewById(R.id.mic_label);
 		mMicBar = (SeekBar)findViewById(R.id.mic_bar);
+		
+		
 		mMicBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 
 			@Override
@@ -131,6 +138,8 @@ public class LiveActivity extends Activity{
 				0, LayoutParams.WRAP_CONTENT,1.0f);
 		mSoundButton.setLayoutParams(paramsSoundButton);
 		mSoundBar.setMax(mSoundButton.getMaxVolume() * 10); //Improve Resolution x10
+
+		
 		
 		OnClickListener clicker = new OnClickListener(){
 
@@ -195,8 +204,41 @@ public class LiveActivity extends Activity{
 			}
 			
 		});
+		
+		
+        
 	}
 	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus){
+		
+		/* Change the size of thumb for MIC */
+		Resources micres = getResources();
+        Drawable micthumb = micres.getDrawable(R.drawable.micnob);
+        Bitmap originalnob = ((BitmapDrawable)micthumb).getBitmap();
+        
+        int mich = (int) (mMicBar.getMeasuredHeight() * 1.3);
+        int micw = mich /2;
+        Bitmap scaledmicnob = Bitmap.createScaledBitmap(originalnob, micw, mich, true);
+        Drawable newMicThumb = new BitmapDrawable(micres, scaledmicnob);
+        newMicThumb.setBounds(0, 0, newMicThumb.getIntrinsicWidth(), newMicThumb.getIntrinsicHeight());
+        mMicBar.setThumb(newMicThumb);
+        
+        /* Change the size of thumb for Sound */
+        Resources soundres = getResources();
+        Drawable soundthumb = soundres.getDrawable(R.drawable.soundnob);
+        Bitmap originalsoundthumb = ((BitmapDrawable)soundthumb).getBitmap();
+        
+        int soundh = (int) (mSoundBar.getMeasuredHeight() * 1.3);
+        int soundw = soundh/2;
+        Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
+        Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
+        newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
+        mSoundBar.setThumb(newSoundThumb);
+		
+        
+        super.onWindowFocusChanged(hasFocus);
+	}
 	private ArrayList<Uri> getAudioResources(){
         ArrayList<Uri> tracks = new ArrayList<Uri>();
         ContentResolver resolver = this.getContentResolver();
@@ -253,6 +295,12 @@ public class LiveActivity extends Activity{
 		mMicButton.stopMic();
 		
 		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
 	}
 
 

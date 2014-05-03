@@ -5,16 +5,17 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
 
-
-
     <style name="MyAppTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <!-- Any customizations for your app running on pre-3.0 devices here -->
     </style>
     
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-      
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->      
     </style>
+    
+
+    
+
 
 </resources>

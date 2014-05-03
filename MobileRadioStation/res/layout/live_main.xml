@@ -27,13 +27,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-        android:layout_weight="4" />    
-		 
+        android:layout_weight="4" 
+			android:progressDrawable="@drawable/seekbar_mic_progress"
+        	android:background="@drawable/seekbar_mic_bg" />
+         
 		 <TextView
             android:id="@+id/mic_status_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
         	android:layout_weight="1"/>
        
         <!-- MIC Buttion -->
@@ -59,12 +62,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-        	android:layout_weight="4" />
+        	android:layout_weight="4"
+        	android:progressDrawable="@drawable/seekbar_sound_progress"
+        	android:background="@drawable/seekbar_sound_bg" />
+        
          <TextView
             android:id="@+id/sound_status_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
         	android:layout_weight="1"/>
        
 		<!-- Sound Button -->
