@@ -1,4 +1,4 @@
-package com.mobilestation.mobileradiostation;
+package com.mobilestation.mobileradiostation.models;
 
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -29,7 +29,7 @@ public class Track {
         MediaStore.Audio.Media.TRACK,
 	};
 	
-	Track (Cursor cursor){
+	public Track (Cursor cursor){
         id              = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media._ID ));
         path            = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
         title           = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.TITLE ));

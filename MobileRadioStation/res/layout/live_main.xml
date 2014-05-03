@@ -78,6 +78,42 @@
         </LinearLayout>
 
 
+    <LinearLayout
+        android:id="@+id/sound_track_ch2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1">
+
+
+         <TextView
+            android:id="@+id/sound_label_ch2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+        	android:layout_weight="1" />
+        
+        <SeekBar
+            android:id="@+id/sound_bar_ch2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+        	android:layout_weight="4"
+        	android:progressDrawable="@drawable/seekbar_sound_progress"
+        	android:background="@drawable/seekbar_sound_bg" />
+        
+         <TextView
+            android:id="@+id/sound_status_label_ch2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+        	android:layout_weight="1"/>
+       
+		<!-- Sound Button -->
+        </LinearLayout>
+
+    
 
     <LinearLayout
         android:id="@+id/sound_header"

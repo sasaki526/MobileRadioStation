@@ -1,7 +1,11 @@
-package com.mobilestation.mobileradiostation;
+package com.mobilestation.mobileradiostation.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.mobilestation.mobileradiostation.MainItem;
+import com.mobilestation.mobileradiostation.R;
+import com.mobilestation.mobileradiostation.R.id;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,6 +1,10 @@
-package com.mobilestation.mobileradiostation;
+package com.mobilestation.mobileradiostation.controller;
 
 import java.util.ArrayList;
+
+import com.mobilestation.mobileradiostation.R;
+import com.mobilestation.mobileradiostation.R.id;
+import com.mobilestation.mobileradiostation.models.Track;
 
 import android.content.Context;
 import android.util.Log;

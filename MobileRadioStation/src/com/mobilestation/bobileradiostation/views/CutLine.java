@@ -1,4 +1,4 @@
-package com.mobilestation.mobileradiostation;
+package com.mobilestation.bobileradiostation.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;

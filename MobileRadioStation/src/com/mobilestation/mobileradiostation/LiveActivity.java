@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.mobilestation.bobileradiostation.views.MicButton;
 import com.mobilestation.bobileradiostation.views.SoundButton;
 import com.mobilestation.mobileradiostation.controller.SoundFileAdapter;
+import com.mobilestation.mobileradiostation.models.Track;
 
 /**
  * Sound Mixer 
@@ -47,17 +48,26 @@ public class LiveActivity extends Activity{
 	/* Code for getting the URI to the sound file. */
 	private static final int CODE_SOUND_URI = 0;
 	
-	/* Widgets */
+	/* Widgets for the MIC track*/
 	TextView mMicLabel = null;
 	SeekBar mMicBar = null;
 	TextView mMicStatusLabel = null;
 	MicButton mMicButton = null;
 	
+	/* Widgets for Ch1 (Stereo LR) */
 	TextView mSoundLabel = null;
 	SeekBar mSoundBar = null;
 	TextView mSoundStatusLabel = null;
 	SoundButton mSoundButton = null;
 
+	/* Widgets for Ch2 (Stereo LR) */
+	TextView mSoundLabel_ch2 = null;
+	SeekBar mSoundBar_ch2 = null;
+	TextView mSoundStatusLabel_ch2 = null;
+	SoundButton mSoundButton_ch2 = null;
+
+	
+	
 	Button mSelecter = null;
 	TextView mSelectedTitle = null;
 	ListView mSoundList = null;
