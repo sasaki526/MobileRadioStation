@@ -47,9 +47,6 @@ import com.mobilestation.mobileradiostation.views.SoundButton;
 public class LiveActivity extends Activity{
 
 	
-	/* Code for getting the URI to the sound file. */
-	private static final int CODE_SOUND_URI = 0;
-	
 	/* Widgets for the MIC track*/
 	TextView mMicLabel = null;
 	SeekBar mMicBar = null;
@@ -73,12 +70,18 @@ public class LiveActivity extends Activity{
 	RadioButton mSelectedTitle_ch1 = null;
 	RadioButton mSelectedTitle_ch2 = null;
 	
-	
+	/* Selection of Sound */
 	ListView mSoundList = null;
+	
+	/* Cross fader */
+	SeekBar mCrossFader = null;
+	private int mCrossFaderCurrentValue;
+	private int mCrossFaderMaxValue;
 	
 	Thread mRT = null;
 
 	ArrayAdapter<Uri> mNextSongs = null;
+
 	private void createMICTrack(){
 
 		/* Construct MIC Track */
@@ -91,8 +94,7 @@ public class LiveActivity extends Activity{
 
 			@Override
 			public void onProgressChanged(SeekBar arg0, int volume, boolean arg2) {
-				mMicButton.setLRVolume(volume / 10.0f,volume / 10.0f);
-				mMicLabel.setText(" Vol:" + Integer.toString(volume));
+					changeVolumeMIC(volume);
 			}
 
 			@Override
@@ -119,6 +121,67 @@ public class LiveActivity extends Activity{
 
 	}
 	
+	
+	private void changeVolumeMIC(int track_volume){
+
+		/* Display Input Volume. */
+		mMicLabel.setText(" Vol:" + Integer.toString(track_volume));
+		
+		float output_level;
+		/* Add Fader Effects */
+		float fader_effects = (float) mCrossFaderCurrentValue / mCrossFaderMaxValue;
+		output_level =  ((track_volume) / 10.0f) * fader_effects;
+		
+		/* Output to the speaker */
+		mMicButton.setLRVolume(output_level,output_level);
+
+	}
+	private void changeVolumeCh1(int track_volume){
+		
+		/* Display Input Volume to the fader from Track Ch1 */
+		mSoundLabel_ch1.setText(" Vol:"+ Integer.toString(track_volume));
+
+		float output_level;
+		/* Add Fader Effects */
+			float fader_effects = (float) mCrossFaderCurrentValue / mCrossFaderMaxValue;
+			Log.i("ch1eff:",String.valueOf(fader_effects));
+			output_level =  ((track_volume) / 10.0f) * fader_effects;
+			Log.i("ch1out:",String.valueOf(output_level));
+		
+			
+		/* Output the audio data modified by fader */
+		mSoundButton_ch1.setLRVolume(output_level,output_level );
+	
+	}
+	
+	private void changeVolumeCh2(int track_volume){
+		
+		/* Display Input Volume to the fader from Track Ch2 */
+		mSoundLabel_ch2.setText(" Vol:"+ Integer.toString(track_volume));
+
+		/* Add Fader Effects */
+		float fader_effects = 1 - ( (float) mCrossFaderCurrentValue / mCrossFaderMaxValue ) ;
+		Log.i("ch2eff:",String.valueOf(fader_effects));
+		float output_level =  (track_volume / 10.0f) * fader_effects;
+		Log.i("ch2out:",String.valueOf(output_level));
+		
+		/* Output the audio data which is modified by the fader. */
+		mSoundButton_ch2.setLRVolume(output_level,output_level);
+		
+	}
+	
+	private void changeVolumeCrossfader(int fader_level){
+		
+		mCrossFaderCurrentValue = fader_level;
+		Log.i("FD:",String.valueOf(mCrossFaderCurrentValue));
+		if ( mSoundBar_ch1 != null && mSoundBar_ch2 != null && mMicBar != null ){
+			changeVolumeCh1(mSoundBar_ch1.getProgress());
+			changeVolumeCh2(mSoundBar_ch2.getProgress());
+			changeVolumeMIC(mMicBar.getProgress());
+		}
+		
+		
+	}
 	private void createSoundTrackCh1(){
 		
 		/* Construct Sound Track */
@@ -127,14 +190,18 @@ public class LiveActivity extends Activity{
 		/* Label for display the volume */
 		mSoundLabel_ch1 = (TextView)findViewById(R.id.sound_label);
 		
-		/* SeekBar for chenging the volume */
+		/* SeekBar for changing the volume */
 		mSoundBar_ch1 = (SeekBar)findViewById(R.id.sound_bar);
 		mSoundBar_ch1.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 			
 			@Override
 			public void onProgressChanged(SeekBar arg0, int volume, boolean arg2) {
-				mSoundButton_ch1.setLRVolume(volume / 10.0f ,volume / 10.0f );
-				mSoundLabel_ch1.setText(" Vol:"+ Integer.toString(volume));
+				
+				if ( arg0.getId() == mSoundBar_ch1.getId() ) {				
+					changeVolumeCh1(volume);
+				}else{
+					Log.i("ch1","What's?!");
+				}
 			}
 			@Override
 			public void onStartTrackingTouch(SeekBar arg0) {	
@@ -147,7 +214,7 @@ public class LiveActivity extends Activity{
 		/* Label for display the status of the track such as Play or Elapsed Time */
 		mSoundStatusLabel_ch1 = (TextView)findViewById(R.id.sound_status_label);
 		
-		mSoundButton_ch1 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch1);
+		mSoundButton_ch1 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch1, "Track1");
 		mSoundButton_ch1.setImageResource(R.drawable.sound);
 		
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
@@ -185,8 +252,12 @@ public class LiveActivity extends Activity{
 			
 			@Override
 			public void onProgressChanged(SeekBar arg0, int volume, boolean arg2) {
-				mSoundButton_ch2.setLRVolume(volume / 10.0f ,volume / 10.0f );
-				mSoundLabel_ch2.setText(" Vol:"+ Integer.toString(volume));
+				if ( arg0.getId() == mSoundBar_ch2.getId() )
+				{
+					changeVolumeCh2(volume);
+				}else{
+					Log.i("ch2","What's?!");
+				}
 			}
 			@Override
 			public void onStartTrackingTouch(SeekBar arg0) {	
@@ -199,7 +270,7 @@ public class LiveActivity extends Activity{
 		
 		mSoundStatusLabel_ch2 = (TextView)findViewById(R.id.sound_status_label_ch2);
 		
-		mSoundButton_ch2 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch2);
+		mSoundButton_ch2 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch2, "Track2");
 		mSoundButton_ch2.setImageResource(R.drawable.sound);
 		
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
@@ -250,22 +321,28 @@ public class LiveActivity extends Activity{
 				int id = mSelector.getCheckedRadioButtonId();
 				RadioButton selected = (RadioButton) findViewById(id);
 				
+				String label_header = "";
 				if ( selected == null ){
 					/* Not Selected Yet */
+					Toast.makeText(LiveActivity.this, 
+							"Please select the radio button above to play this audio file.", 
+							Toast.LENGTH_SHORT).show();
 						return ;
 				}else if ( selected.getId() == mSelectedTitle_ch1.getId()){
 					mSoundButton_ch1.setSoundUri(uri);
 					duration = mSoundButton_ch1.getDurationString();
+					label_header = "T1";
 							
 				}else if ( selected.getId() == mSelectedTitle_ch2.getId() ){
 					mSoundButton_ch2.setSoundUri(uri);
 					duration = mSoundButton_ch2.getDurationString();
+					label_header = "T2";
 					
 				}else {
 					/* NEVER COMES HERE */
 					return;
 				}
-				selected.setText("Selected: " + 
+				selected.setText(label_header + ": " + 
 						Utils.uriToDisplayName(LiveActivity.this, uri)
 						+ " [ "
 						+ duration 
@@ -287,7 +364,7 @@ public class LiveActivity extends Activity{
 					mNextSongs.notifyDataSetChanged();
 					
 					Toast.makeText(LiveActivity.this, 
-							Utils.uriToDisplayName(LiveActivity.this, uri) + " deleted.", 
+							Utils.uriToDisplayName(LiveActivity.this, uri) + " removed from this list.", 
 							Toast.LENGTH_SHORT).show();
 					
 				return false;
@@ -299,23 +376,59 @@ public class LiveActivity extends Activity{
 		
 	}
 	
-	
+	private void createCrossfader(){
+
+		/* SeekBar for changing the volume */
+		mCrossFader = (SeekBar)findViewById(R.id.cross_fader);
+		mCrossFader.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+			
+			
+			@Override
+			public void onProgressChanged(SeekBar arg0, int volume, boolean arg2) {
+				Log.i("cf:",String.valueOf(volume) + ":" + String.valueOf(arg0.getProgress()));
+				if ( arg0.getId() == mCrossFader.getId() ){
+					changeVolumeCrossfader(arg0.getProgress());					
+				}else 
+				{
+					Log.i("cf","What's?!");
+				}
+			}
+			@Override
+			public void onStartTrackingTouch(SeekBar arg0) {
+				
+				
+			}
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar arg0) {	
+			}
+		});
+		
+		/* 
+		 * No reason to be 100. Change it if you want.
+		 */
+		mCrossFaderMaxValue  = 100;
+		mCrossFader.setMax(mCrossFaderMaxValue); 
+		
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.live_main);
 			
-		createMICTrack();
+		
+		createCrossfader();
+		
+	    createMICTrack();
 						
-		createSoundTrackCh1();
+	    createSoundTrackCh1();
 				
 		createSoundTrackCh2();
 		
 		createSoundChooser();
 				
-        
-	}
+    }
 	
 	
 	/**
@@ -357,6 +470,27 @@ public class LiveActivity extends Activity{
 	}
 	
 	/**
+	 * Adjust size of CrossFader on running device.
+	 */
+	private void configureCrossfader(){
+	
+		/* Make and Change the size of thumb for Sound */
+        Resources soundres = getResources();
+        Drawable soundthumb = soundres.getDrawable(R.drawable.soundnob);
+        Bitmap originalsoundthumb = ((BitmapDrawable)soundthumb).getBitmap();
+        
+        int soundh = (int) (mCrossFader.getMeasuredHeight() * 1.3);
+        int soundw = (int) (soundh * 0.7);
+        Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
+        Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
+        newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
+        mCrossFader.setThumb(newSoundThumb);
+      
+	}
+	
+	
+	
+	/**
 	 * Adjust size of SeekBar on running device.
 	 */
 	private void configureSoundTrackCh2(){
@@ -382,7 +516,7 @@ public class LiveActivity extends Activity{
 		configureMICTrack();
 		configureSoundTrackCh1();
 		configureSoundTrackCh2();
-		
+		configureCrossfader();
 		super.onWindowFocusChanged(hasFocus);
 			
     }

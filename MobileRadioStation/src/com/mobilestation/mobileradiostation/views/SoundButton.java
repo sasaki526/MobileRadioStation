@@ -48,7 +48,7 @@ public class SoundButton extends ImageView {
 			handle.post(new Runnable (){		
 				@Override
 				public void run() {
-					//setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
+					text.setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
 							
 				}
 			});
@@ -59,14 +59,14 @@ public class SoundButton extends ImageView {
 	 * Contor
 	 * @param context
 	 */
-	public SoundButton(Context context, TextView mSoundStatusLabel) {
+	public SoundButton(Context context, TextView mSoundStatusLabel, String label) {
 		super(context);
 		mSoundProvider = new SoundButtonHelper(context);
 		mAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 		
 	
 		text = mSoundStatusLabel;
-		text.setText("Sound");
+		text.setText(label);
 			
 	}
 

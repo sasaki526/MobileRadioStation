@@ -132,23 +132,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text = "Ch1-2:"/>
+        android:text = "Audio file for Track1:"/>
         
         <RadioButton
         android:id="@+id/sound_selected_ch2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text = "Ch3-4:"/>
+        android:text = "Audio file for Track2:"/>
     </RadioGroup>
         
     </LinearLayout>
     	
-	<ListView 
+
+    <LinearLayout
+        android:id="@+id/sound_header"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="7"
+        android:orientation="horizontal">
+    
+        	<ListView 
 		    android:id="@+id/sound_list"
-		    android:layout_width="match_parent"
-            android:layout_height="0dp"
+		    android:layout_width="0dp"
+            android:layout_height="wrap_content"
         	android:layout_margin="10dp"
-            android:layout_weight="7"/>
+            android:layout_weight="1"/>
+        	
+        <SeekBar
+            android:id="@+id/cross_fader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+        	android:layout_weight="1"
+        	android:rotation="270"
+        	android:progressDrawable="@drawable/seekbar_cross_fader_progress"
+        	android:background="@drawable/seekbar_cross_fader_bg" />
+        
+    </LinearLayout>
+        	
         
 </LinearLayout>

@@ -47,6 +47,7 @@ public class Utils {
        
         cursor.moveToFirst();
 	    String displayName =  cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media.DISPLAY_NAME)); 
+	    cursor.close();
 	    if ( displayName == null ){
 	    	return uri.toString();
 	    }else{

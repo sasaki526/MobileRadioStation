@@ -70,7 +70,6 @@ public class MicButton extends ImageView {
 	 * @param r right volume index
 	 */
 	public void setLRVolume(float l, float r){
-		mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 		mMic.setLRVolume(l, r);
 		
 	}
