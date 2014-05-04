@@ -4,6 +4,8 @@ package com.mobilestation.mobileradiostation.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -59,8 +61,11 @@ public class MicButton extends ImageView {
 	 * Returns The MAX volume index of music stream.
 	 * @return The maximum valid volume index.
 	 */
-	public int getMaxVolume(){
-		return mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+	public float getMaxVolume(){
+		Log.i("MAXVolume(MIC):",String.valueOf(AudioTrack.getMaxVolume()));
+		Log.i("minVolume(MIC):",String.valueOf(AudioTrack.getMinVolume()));
+
+		return AudioTrack.getMaxVolume();
 	}
 	
 	/**

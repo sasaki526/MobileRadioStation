@@ -191,4 +191,12 @@ public class SoundButtonHelper implements Runnable {
 	    
 	}
 
+	public float getMinVolume() {
+		return AudioTrack.getMinVolume();
+	}
+
+	public float getMaxVolue() {
+		return AudioTrack.getMaxVolume();
+	}
+
 }

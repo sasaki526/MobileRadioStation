@@ -90,7 +90,7 @@ public class LiveActivity extends Activity{
 		float output_level;
 		/* Add Fader Effects */
 		float fader_effects = (float) mCrossFaderCurrentValue / mCrossFaderMaxValue;
-		output_level =  ((track_volume) / 10.0f) * fader_effects;
+		output_level =  ((track_volume) / 100.0f) * fader_effects;
 		
 		/* Output to the speaker */
 		Log.i("MIC:",String.valueOf(output_level));
@@ -105,7 +105,7 @@ public class LiveActivity extends Activity{
 		float output_level;
 		/* Add Fader Effects */
 			float fader_effects = (float) mCrossFaderCurrentValue / mCrossFaderMaxValue;
-			output_level =  ((track_volume) / 10.0f) * fader_effects;
+			output_level =  ((track_volume) / 100.0f) * fader_effects;
 			
 			
 		/* Output the audio data modified by fader */
@@ -121,7 +121,7 @@ public class LiveActivity extends Activity{
 
 		/* Add Fader Effects */
 		float fader_effects = 1 - ( (float) mCrossFaderCurrentValue / mCrossFaderMaxValue ) ;
-		float output_level =  (track_volume / 10.0f) * fader_effects;
+		float output_level =  (track_volume / 100.0f) * fader_effects;
 		
 		/* Output the audio data which is modified by the fader. */
 		Log.i("CH2:",String.valueOf(output_level));
@@ -175,7 +175,7 @@ public class LiveActivity extends Activity{
 		mMicButton.setImageResource(R.drawable.mic);
 		LinearLayout.LayoutParams paramsMicButton = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,1.0f);
 		mMicButton.setLayoutParams(paramsMicButton);
-		mMicBar.setMax(mMicButton.getMaxVolume() * 10 ); //Improve Resolution x10
+		mMicBar.setMax((int) (mMicButton.getMaxVolume() * 100) ); //Improve Resolution x100
 		micLayout.addView(mMicButton);
 	
 	
@@ -220,7 +220,7 @@ public class LiveActivity extends Activity{
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
 				0, LayoutParams.WRAP_CONTENT,1.0f);
 		mSoundButton_ch1.setLayoutParams(paramsSoundButton);
-		mSoundBar_ch1.setMax(mSoundButton_ch1.getMaxVolume() * 10); //Improve Resolution x10
+		mSoundBar_ch1.setMax((int) (mSoundButton_ch1.getMaxVolume() * 100)); //Improve Resolution x100
 		
 		OnClickListener clicker = new OnClickListener(){
 
@@ -276,7 +276,7 @@ public class LiveActivity extends Activity{
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
 				0, LayoutParams.WRAP_CONTENT,1.0f);
 		mSoundButton_ch2.setLayoutParams(paramsSoundButton);
-		mSoundBar_ch2.setMax(mSoundButton_ch2.getMaxVolume() * 10); //Improve Resolution x10
+		mSoundBar_ch2.setMax((int) (mSoundButton_ch2.getMaxVolume() * 100)); //Improve Resolution x100
 
 		OnClickListener clicker = new OnClickListener(){
 
@@ -296,7 +296,7 @@ public class LiveActivity extends Activity{
 	
 	private void createSoundChooser(){
 		
-		//mSelector = (RadioGroup)findViewById(R.id.track_selector);
+		mSelector = (RadioGroup)findViewById(R.id.track_selector);
 		/* Selector for channel 1 */
 		mSelectedTitle_ch1 = (RadioButton)findViewById(R.id.sound_selected_ch1);	
 		/* Selector for channel 2 */

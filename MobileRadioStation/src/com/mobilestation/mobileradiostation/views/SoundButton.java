@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -39,6 +40,8 @@ public class SoundButton extends ImageView {
 	private AudioManager mAudioManager = null;
 	
 	private Timer mTimer = null;
+	
+	
 	class UpdateTime extends TimerTask {
 
 		private Handler handle = new Handler();
@@ -49,7 +52,7 @@ public class SoundButton extends ImageView {
 				@Override
 				public void run() {
 					text.setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
-							
+					
 				}
 			});
 		}
@@ -148,10 +151,15 @@ public class SoundButton extends ImageView {
 	 * Return the maximum volume index you can set.
 	 * @return
 	 */
-	public int getMaxVolume(){
-		return mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+	public float getMaxVolume(){
+		Log.i("MAXVolume(Sound):",String.valueOf(mSoundProvider.getMaxVolue()));
+		Log.i("minVolume(Sound):",String.valueOf(mSoundProvider.getMinVolume()));
+		return mSoundProvider.getMaxVolue();
 	}
 	
+	public float getMinVoluem(){
+		return mSoundProvider.getMinVolume();
+	}
 	/**
 	 * Sets the volume index for left and right.
 	 * 
