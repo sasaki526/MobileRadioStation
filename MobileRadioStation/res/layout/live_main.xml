@@ -125,12 +125,12 @@
         android:layout_margin="10dp"
         android:orientation="vertical"
         android:layout_weight="1">
-   
+
     <RadioGroup
         android:id="@+id/track_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >  
+        android:layout_weight="1" > 
    
         <RadioButton
         android:id="@+id/sound_selected_ch1"
@@ -145,9 +145,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="1" 
         android:text = "Audio file for Track2:"/>
-        
+  
     </RadioGroup>
-    
+  
    </LinearLayout>     
    
    <LinearLayout

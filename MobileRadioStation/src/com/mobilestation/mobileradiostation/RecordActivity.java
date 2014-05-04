@@ -141,18 +141,10 @@ public class RecordActivity extends Activity implements View.OnClickListener {
 	class MyTimerTask extends TimerTask{
 	     @Override
 	     public void run() {
-	         // mHandlerを通じてUI Threadへ処理をキューイング
 	         mHandler.post( new Runnable() {
 	             public void run() {
 	            	 String timeStr = TrackListAdapter.msToTime(System.currentTimeMillis()-mStartTime); 
-	                 //実行間隔分を加算処理
-	//                 mLaptime +=  0.1d;
-	 
-	                 //計算にゆらぎがあるので小数点第1位で丸める
-//	                 BigDecimal bi = new BigDecimal(mLaptime);
-//	                 float outputValue = bi.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
-	 
-	                 //現在のLapTime
+	             
 	                 mTvTime.setText(timeStr);
 	             }
 	         });

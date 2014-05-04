@@ -296,7 +296,7 @@ public class LiveActivity extends Activity{
 	
 	private void createSoundChooser(){
 		
-		mSelector = (RadioGroup)findViewById(R.id.track_selector);
+		//mSelector = (RadioGroup)findViewById(R.id.track_selector);
 		/* Selector for channel 1 */
 		mSelectedTitle_ch1 = (RadioButton)findViewById(R.id.sound_selected_ch1);	
 		/* Selector for channel 2 */
