@@ -178,7 +178,9 @@ public class LiveActivity extends Activity{
 		mMicBar.setMax((int) (mMicButton.getMaxVolume() * 100) ); //Improve Resolution x100
 		micLayout.addView(mMicButton);
 	
-	
+		/* Init Display */
+		changeVolumeMIC(mMicBar.getProgress());
+
 	}
 
 
@@ -234,7 +236,9 @@ public class LiveActivity extends Activity{
 		mSoundButton_ch1.setOnClickListener(clicker);
 		soundLayout.addView(mSoundButton_ch1);
 
-		
+		/* Init Display */
+		changeVolumeCh1(mSoundBar_ch1.getProgress());
+
 	}
 	
 	
@@ -290,6 +294,8 @@ public class LiveActivity extends Activity{
 		mSoundButton_ch2.setOnClickListener(clicker);
 		soundLayout.addView(mSoundButton_ch2);
 
+		/* Init Display */
+		changeVolumeCh2(mSoundBar_ch2.getProgress());
 		
 	}
 	
@@ -421,13 +427,12 @@ public class LiveActivity extends Activity{
 		createCrossfader();
 		
 	    createMICTrack();
-						
 	    createSoundTrackCh1();
-				
 		createSoundTrackCh2();
-		
 		createSoundChooser();
-				
+		
+		
+		
     }
 	
 	
@@ -526,7 +531,7 @@ public class LiveActivity extends Activity{
 		configureMICTrack();
 		configureSoundTrackCh1();
 		configureSoundTrackCh2();
-		configureCrossfader();
+		configureCrossfader(); 
 		super.onWindowFocusChanged(hasFocus);
 			
     }
