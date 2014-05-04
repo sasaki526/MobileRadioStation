@@ -136,14 +136,12 @@
         android:id="@+id/sound_selected_ch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" 
         android:text = "Audio file for Track1:"/>
         
         <RadioButton
         android:id="@+id/sound_selected_ch2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1" 
         android:text = "Audio file for Track2:"/>
   
     </RadioGroup>
