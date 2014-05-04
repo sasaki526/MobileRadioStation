@@ -82,46 +82,6 @@ public class LiveActivity extends Activity{
 
 	ArrayAdapter<Uri> mNextSongs = null;
 
-	private void createMICTrack(){
-
-		/* Construct MIC Track */
-		LinearLayout micLayout = (LinearLayout)findViewById(R.id.mic_track);
-		mMicLabel = (TextView)findViewById(R.id.mic_label);
-		mMicBar = (SeekBar)findViewById(R.id.mic_bar);
-		
-		
-		mMicBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
-
-			@Override
-			public void onProgressChanged(SeekBar arg0, int volume, boolean arg2) {
-					changeVolumeMIC(volume);
-			}
-
-			@Override
-			public void onStartTrackingTouch(SeekBar arg0) {
-				
-			}
-
-			@Override
-			public void onStopTrackingTouch(SeekBar arg0) {
-				
-			}
-			
-		});
-
-		/* Display Status such as "On Air"*/
-		mMicStatusLabel = (TextView) findViewById(R.id.mic_status_label);
-		mMicButton = new MicButton(LiveActivity.this,mMicStatusLabel);
-		mMicButton.setImageResource(R.drawable.mic);
-		LinearLayout.LayoutParams paramsMicButton = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,1.0f);
-		mMicButton.setLayoutParams(paramsMicButton);
-		mMicBar.setMax(mMicButton.getMaxVolume() * 10 ); //Improve Resolution x10
-		micLayout.addView(mMicButton);
-
-
-	}
-	
-	
 	private void changeVolumeMIC(int track_volume){
 
 		/* Display Input Volume. */
@@ -133,6 +93,7 @@ public class LiveActivity extends Activity{
 		output_level =  ((track_volume) / 10.0f) * fader_effects;
 		
 		/* Output to the speaker */
+		Log.i("MIC:",String.valueOf(output_level));
 		mMicButton.setLRVolume(output_level,output_level);
 
 	}
@@ -144,13 +105,12 @@ public class LiveActivity extends Activity{
 		float output_level;
 		/* Add Fader Effects */
 			float fader_effects = (float) mCrossFaderCurrentValue / mCrossFaderMaxValue;
-			Log.i("ch1eff:",String.valueOf(fader_effects));
 			output_level =  ((track_volume) / 10.0f) * fader_effects;
-			Log.i("ch1out:",String.valueOf(output_level));
-		
+			
 			
 		/* Output the audio data modified by fader */
-		mSoundButton_ch1.setLRVolume(output_level,output_level );
+			Log.i("CH1:",String.valueOf(output_level));
+			mSoundButton_ch1.setLRVolume(output_level,output_level );
 	
 	}
 	
@@ -161,19 +121,19 @@ public class LiveActivity extends Activity{
 
 		/* Add Fader Effects */
 		float fader_effects = 1 - ( (float) mCrossFaderCurrentValue / mCrossFaderMaxValue ) ;
-		Log.i("ch2eff:",String.valueOf(fader_effects));
 		float output_level =  (track_volume / 10.0f) * fader_effects;
-		Log.i("ch2out:",String.valueOf(output_level));
 		
 		/* Output the audio data which is modified by the fader. */
+		Log.i("CH2:",String.valueOf(output_level));
 		mSoundButton_ch2.setLRVolume(output_level,output_level);
 		
 	}
 	
 	private void changeVolumeCrossfader(int fader_level){
 		
-		mCrossFaderCurrentValue = fader_level;
 		Log.i("FD:",String.valueOf(mCrossFaderCurrentValue));
+		mCrossFaderCurrentValue = fader_level;
+		
 		if ( mSoundBar_ch1 != null && mSoundBar_ch2 != null && mMicBar != null ){
 			changeVolumeCh1(mSoundBar_ch1.getProgress());
 			changeVolumeCh2(mSoundBar_ch2.getProgress());
@@ -182,6 +142,46 @@ public class LiveActivity extends Activity{
 		
 		
 	}
+	private void createMICTrack(){
+	
+		/* Construct MIC Track */
+		LinearLayout micLayout = (LinearLayout)findViewById(R.id.mic_track);
+		mMicLabel = (TextView)findViewById(R.id.mic_label);
+		mMicBar = (SeekBar)findViewById(R.id.mic_bar);
+		
+		
+		mMicBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+	
+			@Override
+			public void onProgressChanged(SeekBar arg0, int volume, boolean arg2) {
+					changeVolumeMIC(volume);
+			}
+	
+			@Override
+			public void onStartTrackingTouch(SeekBar arg0) {
+				
+			}
+	
+			@Override
+			public void onStopTrackingTouch(SeekBar arg0) {
+				
+			}
+			
+		});
+	
+		/* Display Status such as "On Air"*/
+		mMicStatusLabel = (TextView) findViewById(R.id.mic_status_label);
+		mMicButton = new MicButton(LiveActivity.this,mMicStatusLabel);
+		mMicButton.setImageResource(R.drawable.mic);
+		LinearLayout.LayoutParams paramsMicButton = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,1.0f);
+		mMicButton.setLayoutParams(paramsMicButton);
+		mMicBar.setMax(mMicButton.getMaxVolume() * 10 ); //Improve Resolution x10
+		micLayout.addView(mMicButton);
+	
+	
+	}
+
+
 	private void createSoundTrackCh1(){
 		
 		/* Construct Sound Track */
@@ -441,13 +441,15 @@ public class LiveActivity extends Activity{
         Drawable micthumb = micres.getDrawable(R.drawable.micnob);
         Bitmap originalnob = ((BitmapDrawable)micthumb).getBitmap();
         
-        int mich = (int) (mMicBar.getMeasuredHeight() * 1.3);
-        int micw = (int) (mich * 0.7);
-        Bitmap scaledmicnob = Bitmap.createScaledBitmap(originalnob, micw, mich, true);
-        Drawable newMicThumb = new BitmapDrawable(micres, scaledmicnob);
-        newMicThumb.setBounds(0, 0, newMicThumb.getIntrinsicWidth(), newMicThumb.getIntrinsicHeight());
-        mMicBar.setThumb(newMicThumb);
+        int mich = (int) mMicBar.getMeasuredHeight();
+        int micw = (int) mich;
         
+        if ( 0 < mich && 0 < micw ){
+        	Bitmap scaledmicnob = Bitmap.createScaledBitmap(originalnob, micw, mich, true);
+        	Drawable newMicThumb = new BitmapDrawable(micres, scaledmicnob);
+        	newMicThumb.setBounds(0, 0, newMicThumb.getIntrinsicWidth(), newMicThumb.getIntrinsicHeight());
+        	mMicBar.setThumb(newMicThumb);
+        }
 	}
 	
 	/**
@@ -460,15 +462,39 @@ public class LiveActivity extends Activity{
         Drawable soundthumb = soundres.getDrawable(R.drawable.soundnob);
         Bitmap originalsoundthumb = ((BitmapDrawable)soundthumb).getBitmap();
         
-        int soundh = (int) (mSoundBar_ch1.getMeasuredHeight() * 1.3);
-        int soundw = (int) (soundh * 0.7);
-        Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
-        Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
-        newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
-        mSoundBar_ch1.setThumb(newSoundThumb);
+        int soundh = (int) mSoundBar_ch1.getMeasuredHeight();
+        int soundw = (int) soundh;
+        
+        if ( 0 < soundh && 0 < soundw ){
+        	Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
+        	Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
+        	newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
+        	mSoundBar_ch1.setThumb(newSoundThumb);
+        }
       
 	}
 	
+	/**
+	 * Adjust size of SeekBar on running device.
+	 */
+	private void configureSoundTrackCh2(){
+	
+		/* Make and Change the size of thumb for Sound */
+	    Resources soundres = getResources();
+	    Drawable soundthumb = soundres.getDrawable(R.drawable.soundnob);
+	    Bitmap originalsoundthumb = ((BitmapDrawable)soundthumb).getBitmap();
+	    
+	    int soundh = (int) (mSoundBar_ch2.getMeasuredHeight() );
+	    int soundw = (int) (soundh );
+
+        if ( 0 < soundh && 0 < soundw ){
+	    Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
+	    Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
+	    newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
+	    mSoundBar_ch2.setThumb(newSoundThumb);
+        }
+	
+	}
 	/**
 	 * Adjust size of CrossFader on running device.
 	 */
@@ -479,35 +505,19 @@ public class LiveActivity extends Activity{
         Drawable soundthumb = soundres.getDrawable(R.drawable.soundnob);
         Bitmap originalsoundthumb = ((BitmapDrawable)soundthumb).getBitmap();
         
-        int soundh = (int) (mCrossFader.getMeasuredHeight() * 1.3);
-        int soundw = (int) (soundh * 0.7);
+        int soundh = (int) mCrossFader.getMeasuredHeight();
+        int soundw = (int) soundh;
+
+        if ( 0 < soundh && 0 < soundw ){
         Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
         Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
         newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
         mCrossFader.setThumb(newSoundThumb);
+        }
       
 	}
 	
 	
-	
-	/**
-	 * Adjust size of SeekBar on running device.
-	 */
-	private void configureSoundTrackCh2(){
-	
-		/* Make and Change the size of thumb for Sound */
-        Resources soundres = getResources();
-        Drawable soundthumb = soundres.getDrawable(R.drawable.soundnob);
-        Bitmap originalsoundthumb = ((BitmapDrawable)soundthumb).getBitmap();
-        
-        int soundh = (int) (mSoundBar_ch2.getMeasuredHeight() * 1.3);
-        int soundw = (int) (soundh * 0.7);
-        Bitmap scaledsoundnob = Bitmap.createScaledBitmap(originalsoundthumb, soundw, soundh, true);
-        Drawable newSoundThumb = new BitmapDrawable(soundres, scaledsoundnob);
-        newSoundThumb.setBounds(0, 0, newSoundThumb.getIntrinsicWidth(), newSoundThumb.getIntrinsicHeight());
-        mSoundBar_ch2.setThumb(newSoundThumb);
-      
-	}
 	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus){
