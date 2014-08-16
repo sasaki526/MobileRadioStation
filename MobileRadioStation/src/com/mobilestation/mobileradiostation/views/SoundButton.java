@@ -34,24 +34,30 @@ import android.widget.Toast;
  */
 public class SoundButton extends ImageView {
 
+	/* Display 'PLAY', 'STOP' or Elapsed Time */
 	private TextView text = null;
+	
+	/* Actually Play Music On Another Thread (mRT). */
 	private SoundButtonHelper mSoundProvider = null;
 	private Thread mRT = null;
-	private AudioManager mAudioManager = null;
 	
+	/* Timer for Update View to display Elapsed Time */
 	private Timer mTimer = null;
-	
-	
+		
+	/**
+	 * HELPER
+	 * 
+	 * Show Elapsed Time 
+	 */
 	class UpdateTime extends TimerTask {
 
 		private Handler handle = new Handler();
 		@Override
-		public void run() {
-			
+		public void run() {		
 			handle.post(new Runnable (){		
 				@Override
 				public void run() {
-					text.setText(Utils.foramtTime(mSoundProvider.getCurrentDuration()));	
+					text.setText(Utils.foramtTime(mSoundProvider.getElapsedTime()));	
 					
 				}
 			});
@@ -62,11 +68,9 @@ public class SoundButton extends ImageView {
 	 * Contor
 	 * @param context
 	 */
-	public SoundButton(Context context, TextView mSoundStatusLabel, String label) {
+	public SoundButton(Context context, TextView mSoundStatusLabel, String label, boolean repeat) {
 		super(context);
-		mSoundProvider = new SoundButtonHelper(context);
-		mAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-		
+		mSoundProvider = new SoundButtonHelper(context,repeat);
 	
 		text = mSoundStatusLabel;
 		text.setText(label);

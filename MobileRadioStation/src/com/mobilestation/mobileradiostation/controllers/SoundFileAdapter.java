@@ -1,24 +1,18 @@
 package com.mobilestation.mobileradiostation.controllers;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mobilestation.mobileradiostation.R;
-import com.mobilestation.mobileradiostation.Utils;
-import com.mobilestation.mobileradiostation.models.Track;
-
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.mobilestation.mobileradiostation.R;
+import com.mobilestation.mobileradiostation.Utils;
 
 public class SoundFileAdapter extends ArrayAdapter<Uri> {
 

@@ -1,28 +1,22 @@
 package com.mobilestation.mobileradiostation.views;
 
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.mobilestation.mobileradiostation.Utils;
-
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.AudioTimestamp;
 import android.media.AudioTrack;
 import android.media.AudioTrack.OnPlaybackPositionUpdateListener;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.mobilestation.mobileradiostation.Utils;
+
 /**
- * Play the sound you selected.
+ * Play the sound you selected on a newly Created Thread.
  * 
  * @author masa
  *
@@ -41,8 +35,14 @@ public class SoundButtonHelper implements Runnable {
 	float mLeftVolume;
 	float mRightVolume;
 	
+	/* Length of the music */
 	int mDuration;
+	
+	/* Elapsed Time */
 	int mElapsedTime;
+	
+	/* Repeat or not */
+	boolean mRepeat;
 	
 	/**
 	 * Contor
@@ -56,10 +56,21 @@ public class SoundButtonHelper implements Runnable {
 		mRightVolume = 0;
 		mDuration = 0;
 		mElapsedTime = 0;
+		mRepeat = false;
 	}
 	
 	/**
-	 * Sets the uri
+	 * Conter with repeat status.
+	 * @param context
+	 * @param repeat
+	 */
+	public SoundButtonHelper(Context context, boolean repeat){
+		this(context);
+		mRepeat = repeat;
+	}
+	
+	/**
+	 * Sets the uri to the sound file.
 	 * @param uri
 	 */
 	public void setSoundUri(Uri uri){
@@ -89,7 +100,7 @@ public class SoundButtonHelper implements Runnable {
 	public void setDuration(){
 		mDuration = Utils.uriToDurationInmsec(mContext, mUri);
 	}
-	public int getCurrentDuration(){
+	public int getElapsedTime(){
 		return mElapsedTime;
 	}
 	/**
@@ -114,6 +125,10 @@ public class SoundButtonHelper implements Runnable {
 			return false;
 		}
 		
+		if ( Utils.isMp3(mContext, mUri) ){
+			Toast.makeText(mContext, "MP3 has not been supported yet. Please wait or contribute it ;)", Toast.LENGTH_SHORT).show();
+			return false;
+		}
 		
 		if ( !Utils.isPCM(mContext,mUri) || !Utils.is44100Hz(mContext,	mUri)){
 			Toast.makeText(mContext, "Sorry. 44100Hz and 16bps required for now.", Toast.LENGTH_SHORT).show();
@@ -121,7 +136,6 @@ public class SoundButtonHelper implements Runnable {
 		}
 		
 		setDuration();
-		
 		mRunning = true;
 		return true;
 	}
@@ -132,6 +146,7 @@ public class SoundButtonHelper implements Runnable {
 	public void run() {
 		
 		
+		do {
 		int bufSize = AudioTrack.getMinBufferSize(44100, 
 					AudioFormat.CHANNEL_IN_STEREO, 
 					AudioFormat.ENCODING_PCM_16BIT);
@@ -164,37 +179,53 @@ public class SoundButtonHelper implements Runnable {
 	    long dataWritten = 0;
 		try {
 	    	
-	    	
-	    	InputStream in = mContext.getContentResolver().openInputStream(mUri);
-	        
-	        
-	        DataInputStream soundStream = new DataInputStream(in);
+	    	DataInputStream soundStream = null;
+			InputStream in = null;
+	    	if ( Utils.isMp3(mContext, mUri) ){
+	    		
+	    		//TODO
+	    		//byte[] size = Utils.decode(mUri.getPath(), 0, 10);
+	    		//anTrack.play();
+	    		//dataWritten += anTrack.write(size, 0,size.length);
+	    		//anTrack.setStereoVolume(mLeftVolume, mRightVolume);
+				//mElapsedTime = (int) (mDuration - (dataWritten * 1000 / (44100.0 * 2 * 2)));
+	    		
+	    	}else{
+				in = mContext.getContentResolver().openInputStream(mUri);
+				soundStream = new DataInputStream(in);
+				anTrack.play();
+				while(mRunning && (i = soundStream.read(pieceOfMusic, 0, workbuffer)) > -1){
+					dataWritten += anTrack.write(pieceOfMusic, 0, i);
+					anTrack.setStereoVolume(mLeftVolume, mRightVolume);
+					mElapsedTime = (int) (mDuration - (dataWritten * 1000 / (44100.0 * 2 * 2)));
+				}
+				
+		        anTrack.stop();
+		        anTrack.release();
+		        anTrack = null;
+		        soundStream.close();
+		        in.close();
 
-	        anTrack.play();
-	        while(mRunning && (i = soundStream.read(pieceOfMusic, 0, workbuffer)) > -1){
-	        	
-	            dataWritten += anTrack.write(pieceOfMusic, 0, i);
-	            anTrack.setStereoVolume(mLeftVolume, mRightVolume);
-	            mElapsedTime = (int) (mDuration - (dataWritten * 1000 / (44100.0 * 2 * 2)));
-	        }
-	        anTrack.stop();
-	        anTrack.release();
-	        anTrack = null;
-	        soundStream.close();
-	        in.close();
+	    	}
+			
+	    	
 
 	    } catch (FileNotFoundException e) {
 	        e.printStackTrace();
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
+		
+		}while( mRunning && mRepeat );
 	    
 	}
 
+	/* Return Min Valid Volume */
 	public float getMinVolume() {
 		return AudioTrack.getMinVolume();
 	}
 
+	/* Return Max Valid Volume */
 	public float getMaxVolue() {
 		return AudioTrack.getMaxVolume();
 	}

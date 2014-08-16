@@ -39,7 +39,7 @@ import com.mobilestation.mobileradiostation.views.MicButton;
 import com.mobilestation.mobileradiostation.views.SoundButton;
 
 /**
- * Sound Mixer 
+ * Sound Mixer Page
  * 
  * @author masa
  *
@@ -213,11 +213,11 @@ public class LiveActivity extends Activity{
 			}
 		});
 		
-		/* Label for display the status of the track such as Play or Elapsed Time */
+		/* Label for displaying the status of the track such as Play or Elapsed Time */
 		mSoundStatusLabel_ch1 = (TextView)findViewById(R.id.sound_status_label);
 		
-		mSoundButton_ch1 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch1, "Track1");
-		mSoundButton_ch1.setImageResource(R.drawable.sound);
+		mSoundButton_ch1 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch1, "T1[Loop]",true);
+		mSoundButton_ch1.setImageResource(R.drawable.sound_repeat);
 		
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
 				0, LayoutParams.WRAP_CONTENT,1.0f);
@@ -274,7 +274,7 @@ public class LiveActivity extends Activity{
 		
 		mSoundStatusLabel_ch2 = (TextView)findViewById(R.id.sound_status_label_ch2);
 		
-		mSoundButton_ch2 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch2, "Track2");
+		mSoundButton_ch2 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch2, "T2",false);
 		mSoundButton_ch2.setImageResource(R.drawable.sound);
 		
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(

@@ -2,17 +2,15 @@ package com.mobilestation.mobileradiostation.controllers;
 
 import java.util.ArrayList;
 
-import com.mobilestation.mobileradiostation.R;
-import com.mobilestation.mobileradiostation.R.id;
-import com.mobilestation.mobileradiostation.models.Track;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.mobilestation.mobileradiostation.R;
+import com.mobilestation.mobileradiostation.models.Track;
 
 public class TrackListAdapter extends ArrayAdapter<Track>{
     private Context mContext;

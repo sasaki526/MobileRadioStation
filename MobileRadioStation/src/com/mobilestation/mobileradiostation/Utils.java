@@ -1,5 +1,7 @@
 package com.mobilestation.mobileradiostation;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,8 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.concurrent.TimeUnit;
 
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.BitstreamException;
+import javazoom.jl.decoder.Decoder;
+import javazoom.jl.decoder.DecoderException;
+import javazoom.jl.decoder.Header;
+import javazoom.jl.decoder.SampleBuffer;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -165,5 +172,79 @@ public class Utils {
 				return false;
 			}
 	 
+	  }
+	  
+	  public static boolean isMp3(Context context, Uri uri)  {
+
+		  	String mime = context.getContentResolver().getType(uri);
+			if  ( "audio/mpeg".equals(mime) ) {
+				return true;
+			}
+		  
+		  return false;
+	  }
+	  
+	  
+	  
+	  
+	  public static byte[] decode (String path, int startMs, int maxMs)
+	  throws IOException {
+		  ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024); 
+		  float totalMs = 0;
+		  boolean seeking = true;
+		  File file = new File(path);
+		  InputStream input = new BufferedInputStream(new FileInputStream(file), 8* 1024);
+		  
+		  try{
+			  Bitstream bitstream = new Bitstream(input);
+			  Decoder decorder = new Decoder();
+			  boolean done = false;
+			  while( !done ){
+				  Header frameHeader = bitstream.readFrame();
+				  if ( frameHeader == null ){
+					  done = true;
+				  } else {
+					  totalMs += frameHeader.ms_per_frame();
+					  
+					  if ( totalMs >= startMs ){
+						  seeking = false;
+					  }
+					  
+					  if (! seeking ) {
+						  SampleBuffer output = (SampleBuffer) decorder.decodeFrame(frameHeader,bitstream);
+						  if ( output.getSampleFrequency() != 44100 ||
+								  output.getChannelCount() != 2 ){
+							  throw new RuntimeException("decode error");
+							  
+						  }
+						  
+						  short[] pcm = output.getBuffer();
+						  for ( short s : pcm ){
+							  outStream.write( s & 0xff );
+							  outStream.write(( s >> 8 ) & 0xff );
+						  }
+					  }
+					  
+					  if ( totalMs >= ( startMs + maxMs) ){
+						  done = true;
+					  }
+				  }
+				  bitstream.closeFrame();
+				  
+			  }
+			  return outStream.toByteArray();
+			
+	  } catch ( RuntimeException e){
+		  	throw new IOException("Bitstream error : " + e);
+	  } catch ( DecoderException e ){
+		  throw new IOException("Decoder error : " + e);
+	  } catch (BitstreamException e) {
+		e.printStackTrace();
+	}finally {
+		  if ( input != null ) {
+			  input.close();
+		  }
+	 }
+		return null;
 	  }
 }
