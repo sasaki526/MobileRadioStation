@@ -64,11 +64,11 @@ public class Utils {
 
 	}
 	
-	public static String foramtTime(int milisec){
+	public static String formatTime(long milisec){
 	
-		int s = (milisec / 1000) % 60;
-		int m = (milisec / (1000 * 60)) % 60;
-		int h = (milisec / (1000 * 60 * 60)) % 24;	
+		long s = (milisec / 1000) % 60;
+		long m = (milisec / (1000 * 60)) % 60;
+		long h = (milisec / (1000 * 60 * 60)) % 24;
 		return String.format("%02d:%02d:%02d", h,m,s);
 		}
 	

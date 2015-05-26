@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -217,7 +218,7 @@ public class LiveActivity extends Activity{
 		mSoundStatusLabel_ch1 = (TextView)findViewById(R.id.sound_status_label);
 		
 		mSoundButton_ch1 = new SoundButton(LiveActivity.this,mSoundStatusLabel_ch1, "T1[Loop]",true);
-		mSoundButton_ch1.setImageResource(R.drawable.sound_repeat);
+		mSoundButton_ch1.setImageResource(R.drawable.sound_repeat_new);
 		
 		LinearLayout.LayoutParams paramsSoundButton = new LinearLayout.LayoutParams(
 				0, LayoutParams.WRAP_CONTENT,1.0f);
@@ -335,12 +336,20 @@ public class LiveActivity extends Activity{
 							Toast.LENGTH_SHORT).show();
 						return ;
 				}else if ( selected.getId() == mSelectedTitle_ch1.getId()){
+                    if(mSoundButton_ch1.isRunning()){
+                        mSoundButton_ch1.stopSound();
+                    }
 					mSoundButton_ch1.setSoundUri(uri);
+                    mSoundButton_ch1.setLoop(true);
 					duration = mSoundButton_ch1.getDurationString();
 					label_header = "T1";
 							
 				}else if ( selected.getId() == mSelectedTitle_ch2.getId() ){
-					mSoundButton_ch2.setSoundUri(uri);
+                    if(mSoundButton_ch2.isRunning()){
+                        mSoundButton_ch2.stopSound();
+                    }
+                    mSoundButton_ch2.setSoundUri(uri);
+                    mSoundButton_ch1.setLoop(false);
 					duration = mSoundButton_ch2.getDurationString();
 					label_header = "T2";
 					
@@ -547,11 +556,16 @@ public class LiveActivity extends Activity{
 		
         ArrayList<Uri> audiofiles = new ArrayList<Uri>();
         ContentResolver resolver = this.getContentResolver();
+        String selection = MediaStore.Files.FileColumns.MIME_TYPE + "=? OR " +
+                MediaStore.Files.FileColumns.MIME_TYPE+ "=?";
+        String mp3Mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension("mp3");
+        String wavMime = MimeTypeMap.getSingleton().getMimeTypeFromExtension("wav");
+        String[] selectionArgs = new String[]{wavMime, mp3Mime};
         Cursor cursor = resolver.query(
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
-                        Track.COLUMNS, 
                         null,
-                        null,
+                        selection,
+                        selectionArgs,
                         null);
         while( cursor.moveToNext() ){
                 audiofiles.add( ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

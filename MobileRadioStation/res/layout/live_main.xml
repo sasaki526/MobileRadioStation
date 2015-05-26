@@ -162,14 +162,17 @@
         android:orientation="vertical"
         android:layout_weight="1">
     <SeekBar
-            android:id="@+id/cross_fader"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:paddingLeft="57dp"
-            android:paddingRight="57dp"
-        	android:layout_height= "50dp"
-        	android:progressDrawable="@drawable/seekbar_cross_fader_progress"
-        	android:background="@drawable/seekbar_cross_fader_bg" />
+        android:id="@+id/cross_fader"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:paddingLeft="28dp"
+        android:paddingRight="28dp"
+        android:layout_marginLeft = "57dp"
+        android:layout_marginRight = "57dp"
+        android:layout_height= "50dp"
+
+        android:progressDrawable="@drawable/seekbar_cross_fader_progress"
+        android:background="@drawable/seekbar_cross_fader_bg" />
      
  
      <ListView 
