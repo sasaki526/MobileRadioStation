@@ -1,11 +1,6 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" 
-    android:id="@+id/mrs_frame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-   
-<LinearLayout 
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:soundButton="http://schemas.android.com/apk/res-auto"
     android:id="@+id/live_layout2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" 
@@ -14,175 +9,156 @@
     <LinearLayout
         android:id ="@+id/mic_track"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/seekbar_margin"
         android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/mic_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-        	android:layout_weight="1"/>
-        
         <SeekBar
             android:id="@+id/mic_bar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/seekbar_height"
             android:layout_gravity="center_vertical"
-        	android:layout_weight="4" 
-        	android:paddingLeft="32dp"
-        	android:paddingRight="32dp"
-			android:progressDrawable="@drawable/seekbar_mic_progress"
-        	android:background="@drawable/seekbar_mic_bg" />
-         
-		 <TextView
-            android:id="@+id/mic_status_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-        	android:layout_weight="1"/>
-       
-        <!-- MIC Buttion -->
+        	android:layout_weight="1"
+            android:thumb="@drawable/micnob"
+            android:thumbOffset="@dimen/thumb_offset"
+            android:paddingStart="@dimen/thumb_offset"
+            android:paddingEnd="@dimen/thumb_offset"
+			android:progressDrawable="@drawable/seekbar_mic_progress"/>
+
+        <RelativeLayout
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size" >
+            <com.mobilestation.mobileradiostation.views.MicButton
+                android:id="@+id/mic_button"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size" />
+
+            <TextView
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/onair_text_size"
+                android:textStyle="bold"
+                android:text="ON\nAIR"/>
+
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/sound_track"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
- 		android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/seekbar_margin"
         android:orientation="horizontal">
 
-
-         <TextView
-            android:id="@+id/sound_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-        	android:layout_weight="1" />
-        
         <SeekBar
             android:id="@+id/sound_bar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/seekbar_height"
             android:layout_gravity="center_vertical"
-        	android:paddingLeft="32dp"
-        	android:paddingRight="32dp"
-			android:layout_weight="4"
-        	android:progressDrawable="@drawable/seekbar_sound_progress"
-        	android:background="@drawable/seekbar_sound_bg" />
-        
-         <TextView
-            android:id="@+id/sound_status_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-        	android:layout_weight="1"/>
-       
-		<!-- Sound Button -->
-        </LinearLayout>
+            android:thumb="@drawable/micnob"
+            android:thumbOffset="@dimen/thumb_offset"
+            android:paddingStart="@dimen/thumb_offset"
+            android:paddingEnd="@dimen/thumb_offset"
+			android:layout_weight="1"
+        	android:progressDrawable="@drawable/seekbar_sound_progress_ch1"/>
 
+        <com.mobilestation.mobileradiostation.views.SoundButton
+            android:id="@+id/sound_button_1"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            soundButton:color="@color/track1"/>
+     </LinearLayout>
+    <ListView
+        android:id="@+id/playlist_1"
+        android:layout_width="match_parent"
+        android:layout_height= "@dimen/playlist_height"
+        android:layout_marginLeft="@dimen/playlist_start_margin"
+        android:layout_marginRight="0dp"
+        android:scrollbars="none"
+        android:listSelector="@drawable/songlist_selector"/>
 
     <LinearLayout
         android:id="@+id/sound_track_ch2"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/seekbar_margin"
+        android:gravity="center_vertical"
         android:orientation="horizontal" >
 
-
-         <TextView
-            android:id="@+id/sound_label_ch2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-        	android:layout_weight="1" />
-        
         <SeekBar
             android:id="@+id/sound_bar_ch2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/seekbar_height"
             android:layout_gravity="center_vertical"
-        	android:paddingLeft="32dp"
-        	android:paddingRight="32dp"
-			android:layout_weight="4"
-        	android:progressDrawable="@drawable/seekbar_sound_progress"
-        	android:background="@drawable/seekbar_sound_bg" />
-        
-         <TextView
-            android:id="@+id/sound_status_label_ch2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-        	android:layout_weight="1"/>
-       
-		<!-- Sound Button -->
+            android:thumb="@drawable/soundnob"
+            android:thumbOffset="@dimen/thumb_offset"
+            android:paddingStart="@dimen/thumb_offset"
+            android:paddingEnd="@dimen/thumb_offset"
+			android:layout_weight="1"
+        	android:progressDrawable="@drawable/seekbar_sound_progress_ch2"/>
+
+        <com.mobilestation.mobileradiostation.views.SoundButton
+            android:id="@+id/sound_button_2"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            soundButton:color="@color/track2"/>
         </LinearLayout>
 
-   <LinearLayout
-       android:id="@+id/selection_layout"
+    <ListView
+        android:id="@+id/playlist_2"
         android:layout_width="match_parent"
-        android:layout_height="82dp"
-        android:layout_margin="10dp"
-        android:orientation="vertical">
+        android:layout_height= "@dimen/playlist_height"
+        android:layout_marginLeft="@dimen/playlist_start_margin"
+        android:layout_marginRight="0dp"
+        android:scrollbars="none"
+        android:listSelector="@drawable/songlist_selector"/>
 
-    <RadioGroup
-        android:id="@+id/track_selector"
-        android:layout_width="match_parent"
-        android:layout_height="82dp"
-        android:orientation="vertical"> 
-   
-        <RadioButton
-        android:id="@+id/sound_selected_ch1"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_gravity="center_vertical"
-        android:text = "Audio file for Track1:"/>
-        
-        <RadioButton
-        android:id="@+id/sound_selected_ch2"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_gravity="center_vertical"
-        android:text = "Audio file for Track2:"/>
-  
-    </RadioGroup>
-  
-   </LinearLayout>     
-   
-   <LinearLayout
-       android:id="@+id/fader_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="10dp"
-        android:orientation="vertical"
-        android:layout_weight="1">
-    <SeekBar
-        android:id="@+id/cross_fader"
-        android:layout_width="match_parent"
-        android:layout_margin="10dp"
-        android:paddingLeft="28dp"
-        android:paddingRight="28dp"
-        android:layout_marginLeft = "57dp"
-        android:layout_marginRight = "57dp"
-        android:layout_height= "50dp"
+       <SeekBar
+           android:id="@+id/cross_fader"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/seekbar_height"
+           android:layout_marginStart="@dimen/seekbar_margin"
+           android:layout_marginEnd="@dimen/seekbar_margin"
+           android:layout_marginBottom="@dimen/seekbar_margin"
+           android:thumb="@drawable/soundnob"
+           android:thumbOffset="@dimen/thumb_offset"
+           android:paddingStart="@dimen/thumb_offset"
+           android:paddingEnd="@dimen/thumb_offset"
+           android:progressDrawable="@drawable/seekbar_cross_fader_progress" />
 
-        android:progressDrawable="@drawable/seekbar_cross_fader_progress"
-        android:background="@drawable/seekbar_cross_fader_bg" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/margin_s"
+        android:layout_marginRight="@dimen/margin_s"
+        android:background="@android:color/darker_gray"/>
+
+
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="@dimen/margin_s"
+         android:layout_marginLeft="@dimen/seekbar_margin"
+         android:layout_marginRight="0dp"
+         android:text="@string/songlist_title"
+         android:textSize="@dimen/songlist_title_text_size" />
      
  
-     <ListView 
-		    android:id="@+id/sound_list"
-		    android:layout_width="wrap_content"
-            android:layout_height= "250dp"
-            android:minHeight="200dp"
-        	android:layout_margin="10dp"/>
-        	   
-
+    <ListView
+     	    android:id="@+id/sound_list"
+		    android:layout_width="match_parent"
+            android:layout_height= "0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/playlist_start_margin"
+            android:layout_marginRight="0dp"
+            android:scrollbars="none"
+            android:listSelector="@drawable/songlist_selector"/>
 </LinearLayout>
-</LinearLayout>
-</ScrollView>

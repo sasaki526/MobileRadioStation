@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="track1">#FF77BE76</color>
+    <color name="track2">#FFEEA7A6</color>
+
+    <color name="clear">#00000000</color>
+</resources>

@@ -1,5 +1,7 @@
 package com.mobilestation.mobileradiostation.myplayer;
 
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,7 +16,6 @@ import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.DecoderException;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.SampleBuffer;
-import android.util.Log;
 
 public class Mp3Decoder {
     private int mBufSize;
@@ -73,9 +74,6 @@ public class Mp3Decoder {
                             initInputStream();
                             mListener.onReachEnd();
                         } else {
-                            // >>> Debug
-                            //Log.d(TAG, "time: "+frameHeader.ms_per_frame());
-                            // <<< Debug
                             SampleBuffer output = (SampleBuffer) decoder
                                     .decodeFrame(frameHeader, bitstream);
 

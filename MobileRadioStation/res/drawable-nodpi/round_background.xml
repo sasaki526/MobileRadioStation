@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-
-</shape>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+        <solid
+            android:color="@android:color/white" />
+        <corners
+            android:bottomLeftRadius="@dimen/onair_round_radius"
+            android:bottomRightRadius="@dimen/onair_round_radius"
+            android:topLeftRadius="@dimen/onair_round_radius"
+            android:topRightRadius="@dimen/onair_round_radius" />
+    </shape>

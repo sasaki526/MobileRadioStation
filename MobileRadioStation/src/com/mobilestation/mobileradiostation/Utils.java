@@ -1,5 +1,13 @@
 package com.mobilestation.mobileradiostation;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,14 +24,6 @@ import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.DecoderException;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.SampleBuffer;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.database.Cursor;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.widget.Toast;
 
 public class Utils {
 	public static final String LIST_MODE = "com.mobilestation.mobileradiostation.LIST_MODE";
@@ -58,10 +58,26 @@ public class Utils {
 	    if ( displayName == null ){
 	    	return uri.toString();
 	    }else{
-	    	    Log.i("test",displayName);
-	    	    return displayName; 
+	    	    return displayName;
 	    }
 
+	}
+
+	public static String getDurationString(Context context, Uri uri) {
+		String[] column = { MediaStore.Audio.Media.DURATION };
+		ContentResolver resolver = context.getContentResolver();
+		Cursor cursor = resolver.query(
+				uri,
+				column,
+				null,
+				null,
+				null);
+
+		cursor.moveToFirst();
+		long duration =  cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media.DURATION));
+		cursor.close();
+
+		return formatTime(duration);
 	}
 	
 	public static String formatTime(long milisec){
@@ -247,4 +263,16 @@ public class Utils {
 	 }
 		return null;
 	  }
+
+
+	public static String getPath(Context context, Uri uri){
+		ContentResolver contentResolver = context.getContentResolver();
+		String[] columns = { MediaStore.Audio.Media.DATA };
+		Cursor cursor = contentResolver.query(uri, columns, null, null, null);
+		cursor.moveToFirst();
+		String path = cursor.getString(0);
+		cursor.close();
+		return path;
+	}
+
 }

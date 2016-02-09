@@ -3,13 +3,16 @@ package com.mobilestation.mobileradiostation.views;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.Handler;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import com.mobilestation.mobileradiostation.R;
 
 /**
  * Button for Line out from MIC in.
@@ -24,13 +27,11 @@ public class MicButton extends ImageView {
 	
 	//private static final String TAG = "MicButton";
 	
-	private TextView text = null;
-	
 	MicButtonHelper mMic = null;
 	Thread mRT  = null;
 	AudioManager mAudioManager = null;
-	
-	
+	Handler mHandler;
+
 	OnClickListener clicker = new OnClickListener(){
 
 		@Override
@@ -45,16 +46,25 @@ public class MicButton extends ImageView {
 	 * @param context
 	 */
 
-	public MicButton(Context context, TextView mMicStatusLabel) {
-		super(context);
+	public MicButton(Context context) {
+		this(context, null);
+	}
+
+	public MicButton(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
+	}
+
+	public MicButton(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+
 		mMic = new MicButtonHelper();
+		this.setImageResource(R.drawable.round_background);
+		this.setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_IN);
 		setOnClickListener(clicker);
-		
+
 		mAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-	
-		text = mMicStatusLabel;
-		text.setText("MIC");
-		
+
+		mHandler = new Handler();
 	}
 
 	/**
@@ -104,9 +114,12 @@ public class MicButton extends ImageView {
 		mMic.terminate();
 		try {
 			mRT.join();
-			text.setText("MIC OFF");
-			text.setTextColor(Color.rgb(0, 100, 0));			
-
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					MicButton.this.setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_IN);
+				}
+			});
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}		
@@ -120,10 +133,13 @@ public class MicButton extends ImageView {
 		mRT = new Thread(mMic);
 		mMic.getSet();
 		mRT.start();
-		
-		text.setText("ON AIR");
-		text.setTextColor(Color.RED);
 
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				MicButton.this.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+			}
+		});
 	}
 	
 	

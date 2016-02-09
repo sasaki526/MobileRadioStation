@@ -1,19 +1,13 @@
 package com.mobilestation.mobileradiostation.myplayer;
 
-import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.net.Uri;
 
-import com.mobilestation.mobileradiostation.Utils;
-
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by miyamo on 2014/12/28.
@@ -21,9 +15,12 @@ import java.io.InputStream;
 public class WavPlayer extends BasePlayer{
     private AudioTrack mAudioTrack;
     private String mPath;
-    private InputStream mInputStream;
+    private FileInputStream mInputStream;
     private DataInputStream mSoundStream;
 
+    private PlayStatusListener mListener;
+
+    private long mWrittenDataSize = 0;
     private boolean mRunning = false;
 
     public WavPlayer(String path) {
@@ -42,6 +39,10 @@ public class WavPlayer extends BasePlayer{
                 bufSize,
                 AudioTrack.MODE_STREAM);
 
+        initDataStream();
+
+
+
         mAudioTrack.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener() {
             @Override
             public void onMarkerReached(AudioTrack track) {
@@ -51,6 +52,11 @@ public class WavPlayer extends BasePlayer{
             public void onPeriodicNotification(AudioTrack track) {
             }
         });
+    }
+
+    @Override
+    public String getPath() {
+        return mPath;
     }
 
     @Override
@@ -69,23 +75,25 @@ public class WavPlayer extends BasePlayer{
                 int i = 0;
                 int workbuffer = 512;
                 byte[] pieceOfMusic = new byte[workbuffer];
-                long dataWritten = 0;
+//                long dataWritten = 0;
                 try {
-                    DataInputStream soundStream = null;
-                    InputStream in = new FileInputStream(mPath);
-                    soundStream = new DataInputStream(in);
+//                    DataInputStream soundStream = null;
+//                    InputStream in = new FileInputStream(mPath);
+//                    soundStream = new DataInputStream(in);
                     mAudioTrack.play();
-                    while(mRunning && (i = soundStream.read(pieceOfMusic, 0, workbuffer)) > -1){
-                        dataWritten += mAudioTrack.write(pieceOfMusic, 0, i);
+                    while(mRunning && (i = mSoundStream.read(pieceOfMusic, 0, workbuffer)) > -1){
+                        mWrittenDataSize += mAudioTrack.write(pieceOfMusic, 0, i);
                         mAudioTrack.setStereoVolume(mLeftVolume, mRightVolume);
-                        mElapsedTime = (int) (mDuration - (dataWritten * 1000 / (44100.0 * 2 * 2)));
+                        mElapsedTime = (long)(mWrittenDataSize * 1000 / (44100.0 * 2 * 2));
                     }
 
                     mAudioTrack.stop();
-                    soundStream.close();
-                    in.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    mWrittenDataSize = 0;
+                    mSoundStream.close();
+                    mInputStream.close();
+                    if (mListener != null) {
+                        mListener.onReachEnd();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -100,11 +108,28 @@ public class WavPlayer extends BasePlayer{
     public void stop() {
         mRunning = false;
         mAudioTrack.stop();
+        initDataStream();
     }
 
     @Override
     public void pause() {
+        mRunning = false;
+        mAudioTrack.pause();
+    }
 
+    @Override
+    public void setListener(PlayStatusListener listener) {
+        mListener = listener;
+    }
+
+    private void initDataStream() {
+        try {
+            mInputStream = new FileInputStream(mPath);
+            mSoundStream = new DataInputStream(mInputStream);
+            mWrittenDataSize = 0;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

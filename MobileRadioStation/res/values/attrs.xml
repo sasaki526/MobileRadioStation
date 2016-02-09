@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <declare-styleable name="SoundButton">
+        <attr name="color" format="color"/>
+        <attr name="repeat" format="boolean" />
+    </declare-styleable>
+</resources>

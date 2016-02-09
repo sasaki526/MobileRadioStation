@@ -14,6 +14,14 @@ public abstract class BasePlayer {
     protected float mLeftVolume;
     protected float mRightVolume;
 
+    protected String mPath;
+
+    public interface PlayStatusListener {
+        public void onReachEnd();
+    }
+
+    abstract public String getPath();
+
     abstract public boolean isPlaying();
 
     abstract public void play();
@@ -29,6 +37,8 @@ public abstract class BasePlayer {
     abstract public void setLRVolume(float l, float r);
 
     abstract public long getDuration();
+
+    abstract public void setListener(PlayStatusListener listener);
 
     protected long getDuration(String path) {
         long duration = 0;

@@ -3,7 +3,6 @@ package com.mobilestation.mobileradiostation.myplayer;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.media.MediaMetadataRetriever;
 
 import java.io.IOException;
 
@@ -11,14 +10,18 @@ public class Mp3Player extends BasePlayer implements Mp3DecodeStatusListener {
     private Mp3Decoder mDecoder;
     private AudioTrack mAudioTrack;
 
+    private PlayStatusListener mListener;
+
     public static final int PCM_FREQ = 44100; // Hz
 
     private final String TAG = this.getClass().getSimpleName();
 
     public Mp3Player(String path, int bufSize){
+        mPath = path;
+
         mDecoder = new Mp3Decoder(path, bufSize);
 
-        mDuration = getDuration(path);
+        mDuration = getDuration(mPath);
 
         mAudioTrack = new AudioTrack(
                 AudioManager.STREAM_MUSIC,
@@ -30,10 +33,17 @@ public class Mp3Player extends BasePlayer implements Mp3DecodeStatusListener {
         mAudioTrack.setPlaybackRate(PCM_FREQ);
     }
 
+    @Override
+    public String getPath() {
+        return mPath;
+    }
+
+    @Override
     public boolean isPlaying(){
         return mDecoder.isDecoding();
     }
 
+    @Override
     public void play(){
         try {
             mAudioTrack.play();
@@ -44,20 +54,22 @@ public class Mp3Player extends BasePlayer implements Mp3DecodeStatusListener {
         }
     }
 
+    @Override
     public void stop(){
         mAudioTrack.stop();
         mDecoder.stopDecode();
         mDecoder.removeListener();
     }
 
+    @Override
     public void pause(){
         mAudioTrack.pause();
         mDecoder.pauseDecode();
         mDecoder.removeListener();
     }
 
-    public long getElapsedTime(){
-        return (mDuration - mDecoder.getElapsedTime());
+    public long getElapsedTime() {
+        return mDecoder.getElapsedTime();
     }
 
     public void setLoop(boolean loop){
@@ -69,6 +81,11 @@ public class Mp3Player extends BasePlayer implements Mp3DecodeStatusListener {
         mLeftVolume = l;
         mRightVolume = r;
         mAudioTrack.setStereoVolume(mLeftVolume, mRightVolume);
+    }
+
+    @Override
+    public void setListener(PlayStatusListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -84,6 +101,10 @@ public class Mp3Player extends BasePlayer implements Mp3DecodeStatusListener {
     @Override
     public void onReachEnd() {
         stop();
+        if (mListener != null) {
+            mListener.onReachEnd();
+        }
+
         if(mLoop){
             play();
         }

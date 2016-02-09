@@ -1,9 +1,15 @@
 package com.mobilestation.mobileradiostation.views;
 
 
-import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.media.AudioTrack;
+import android.net.Uri;
+import android.os.Handler;
+import android.util.AttributeSet;
+import android.widget.ImageView;
 
 import com.mobilestation.mobileradiostation.R;
 import com.mobilestation.mobileradiostation.Utils;
@@ -11,25 +17,8 @@ import com.mobilestation.mobileradiostation.myplayer.BasePlayer;
 import com.mobilestation.mobileradiostation.myplayer.Mp3Player;
 import com.mobilestation.mobileradiostation.myplayer.WavPlayer;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.net.Uri;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.text.style.UpdateAppearance;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Button for playing music.
@@ -43,9 +32,9 @@ import android.widget.Toast;
 public class SoundButton extends ImageView {
     private Context mContext;
 
-	/* Display 'PLAY', 'STOP' or Elapsed Time */
-	private TextView text = null;
-	
+    private int mColor;
+    private boolean mRepeat;
+
 	/* Actually Play Music On Another Thread (mRT). */
 	//private SoundButtonHelper mSoundProvider = null; // ym
     private BasePlayer mPlayer;
@@ -54,12 +43,20 @@ public class SoundButton extends ImageView {
     private float mLeftVol;
     private float mRightVol;
 
+    private SoundButtonListener mListener;
+
 	/* Timer for Update View to display Elapsed Time */
 	private Timer mTimer = null;
+    private Handler mHandler;
 
     private static final int MP3_BUFSIZE = 1024;
     private static final String MP3_EXT = ".mp3";
     private static final String WAV_EXT = ".wav";
+
+    public interface SoundButtonListener {
+        public void onReachEnd();
+        public void onTimeChanged(long elapsedTime);
+    }
 
 	/**
 	 * HELPER
@@ -67,33 +64,40 @@ public class SoundButton extends ImageView {
 	 * Show Elapsed Time 
 	 */
 	class UpdateTime extends TimerTask {
-
-		private Handler handle = new Handler();
-		@Override
+//		@Override
 		public void run() {		
-			handle.post(new Runnable (){		
-				@Override
-				public void run() {
-					//text.setText(Utils.formatTime(mSoundProvider.getElapsedTime())); // ym
-                    text.setText(Utils.formatTime(mPlayer.getElapsedTime()));
-					
-				}
+			mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mListener.onTimeChanged(mPlayer.getElapsedTime());
+                }
 			});
 		}
-	
 	}
 	/**
 	 * Contor
 	 * @param context
 	 */
-	public SoundButton(Context context, TextView mSoundStatusLabel, String label, boolean repeat) {
-		super(context);
-//		mSoundProvider = new SoundButtonHelper(context,repeat); // ym
-	    mContext = context;
-		text = mSoundStatusLabel;
-		text.setText(label);
-			
+	public SoundButton(Context context) {
+		this(context, null);
 	}
+
+    public SoundButton(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public SoundButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        mContext = context;
+        TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.SoundButton);
+        mColor = typedArray.getColor(R.styleable.SoundButton_color, Color.BLACK);
+        mRepeat = typedArray.getBoolean(R.styleable.SoundButton_repeat, false);
+        mHandler = new Handler();
+        this.setColorFilter(mColor, PorterDuff.Mode.SRC_IN);
+        this.setImageResource(R.drawable.play_button);
+    }
+
 
 	/**
 	 * Set the uri indicates your sound file 
@@ -101,20 +105,29 @@ public class SoundButton extends ImageView {
 	 * 
 	 * @param uri
 	 */
-	public void setSoundUri(Uri uri )
-    {
+	public void setSoundUri(Uri uri ) {
 		//mSoundProvider.setSoundUri(uri);
         if(uri!=null) {
-            String path = getPath(uri);
+            String path = Utils.getPath(mContext, uri);
             if (path.endsWith(MP3_EXT)) {
                 mPlayer = new Mp3Player(path, MP3_BUFSIZE);
             } else if (path.endsWith(WAV_EXT)) {
                 mPlayer = new WavPlayer(path);
             }
+            if (mPlayer != null) {
+                mPlayer.setListener(new BasePlayer.PlayStatusListener() {
+                    @Override
+                    public void onReachEnd() {
+                        if (mListener != null) {
+                            mListener.onReachEnd();
+                        }
+                    }
+                });
+            }
         }
 	} // ym
 
-    public void setLoop(boolean loop){
+    public void setLoop(boolean loop) {
         if(mPlayer!=null){
             mPlayer.setLoop(loop);
         }
@@ -129,11 +142,8 @@ public class SoundButton extends ImageView {
 //		if ( mSoundProvider.isRunning() ){
         if(mPlayer != null) {
             if (mPlayer.isPlaying()) {
-                Log.i("test", "true");
                 stopSound();
-
             } else {
-                Log.i("test", "FALSE");
                 startSound();
             }
         }
@@ -144,11 +154,16 @@ public class SoundButton extends ImageView {
 	 * Stops the music.
 	 * Implementation method to stop the music.
 	 */
-	public void stopSound(){
+	public void stopSound() {
         if(mPlayer!=null){
             mPlayer.stop();
-            text.setText("Play");
-            text.setTextColor(Color.rgb(0, 100, 0));
+//            mPlayer.pause();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SoundButton.this.setImageResource(R.drawable.play_button);
+                }
+            });
         }
         if(mTimer!=null){
             mTimer.cancel();
@@ -173,19 +188,21 @@ public class SoundButton extends ImageView {
 	}
 
 
-
-
 	/**
 	 * Starts your sound.
 	 */
-	private void startSound(){
+	public void startSound() {
         if(mPlayer != null) {
             mTimer = new Timer();
             mTimer.schedule(new UpdateTime(), 0, 1000);
             mPlayer.setLRVolume(mLeftVol, mRightVol);
             mPlayer.play();
-            text.setText("Stop");
-            text.setTextColor(Color.RED);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SoundButton.this.setImageResource(R.drawable.pause_button);
+                }
+            });
         }
 //		mRT = new Thread(mSoundProvider);
 //		if ( mSoundProvider.getSet() ){
@@ -201,11 +218,30 @@ public class SoundButton extends ImageView {
 //
 	}
 
+    /**
+     * Pauses your sound
+     */
+    public void pauseSound() {
+        if(mPlayer != null) {
+            mPlayer.pause();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SoundButton.this.setImageResource(R.drawable.play_button);
+                }
+            });
+        }
+
+        if(mTimer!=null){
+            mTimer.cancel();
+        }
+    }
+
 	/**
 	 * Return the maximum volume index you can set.
 	 * @return
 	 */
-	public float getMaxVolume(){ // ym
+	public float getMaxVolume() { // ym
 //		Log.i("MAXVolume(Sound):",String.valueOf(mSoundProvider.getMaxVolue()));
 //		Log.i("minVolume(Sound):",String.valueOf(mSoundProvider.getMinVolume()));
 
@@ -251,21 +287,23 @@ public class SoundButton extends ImageView {
 
     }
 
+    public String getPath() {
+        if (mPlayer == null) {
+            return null;
+        } else {
+            return mPlayer.getPath();
+        }
+    }
+
 
 	public String getDurationString() {
 //		mSoundProvider.setDuration(); // ym
 //		return Utils.foramtTime(mSoundProvider.getDuration()); // ym
         return Utils.formatTime(mPlayer.getDuration());
 	}
-	
-    private String getPath(Uri uri){
-        ContentResolver contentResolver = mContext.getContentResolver();
-        String[] columns = { MediaStore.Audio.Media.DATA };
-        Cursor cursor = contentResolver.query(uri, columns, null, null, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(0);
-        cursor.close();
-        return path;
+
+    public void setListener(SoundButtonListener listener) {
+        mListener = listener;
     }
 	
 }

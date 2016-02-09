@@ -7,4 +7,12 @@
     <string name="start_label">Start</string>
     <string name="stop_label">Stop</string>
 
+
+
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="track1">Track 1</string>
+    <string name="track2">Track 2</string>
+    <string name="songlist_title">Library</string>
+
 </resources>
